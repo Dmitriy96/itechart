@@ -16,6 +16,21 @@ public class FindContactService {
     private static Logger log = LogManager.getLogger(FindContactService.class.getName());
 
     public static List<Contact> getContacts(int offset) throws ServiceException {
+        log.debug("getContacts: " + offset);
+        List<Contact> contacts = new ArrayList<>();
+        try {
+            DaoFactory daoFactory = DaoFactory.getDaoFactory();
+            ContactFindDao findDao = daoFactory.getContactFindDao();
+            contacts = findDao.getContacts(offset);
+        } catch (DaoException ex) {
+            log.error(ex);
+            throw new ServiceException(ex);
+        }
+        return contacts;
+    }
+
+    public static Contact getContact(Integer contactId) throws ServiceException {
+        log.debug("getContacts: " + offset);
         List<Contact> contacts = new ArrayList<>();
         try {
             DaoFactory daoFactory = DaoFactory.getDaoFactory();
@@ -29,6 +44,7 @@ public class FindContactService {
     }
 
     public static List<String> getEmails(Integer contactsID[]) throws ServiceException {
+        log.debug("getEmails: ");
         List<String> emails = new ArrayList<>();
         try {
             DaoFactory daoFactory = DaoFactory.getDaoFactory();

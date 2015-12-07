@@ -1,25 +1,28 @@
 package by.itechart.javalab.service;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Properties;
 
 
 public class SendEmailService {
+    private static Logger log = LogManager.getLogger(SendEmailService.class.getName());
     private static final String username;
     private static final String password;
 
     static {
         Properties properties = new Properties();
-        try (InputStream inputStream = new FileInputStream("config.properties")) {
-            properties.load(inputStream);
+        try {
+            properties.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("config.properties"));
         } catch (IOException e) {}
         username = properties.getProperty("gmail.username");
         password = properties.getProperty("gmail.password");
+        log.debug(username, password);
     }
 
     public static boolean sendEmail(EmailAttributes emailAttributes) throws ServiceException {
@@ -43,6 +46,7 @@ public class SendEmailService {
             message.setText(emailAttributes.getEmailText());
             Transport.send(message);
         } catch (MessagingException e) {
+            log.error(e);
             throw new ServiceException("Не удалось отправить email.", e);
         }
         return true;

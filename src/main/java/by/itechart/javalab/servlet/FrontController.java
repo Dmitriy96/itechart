@@ -23,17 +23,13 @@ public class FrontController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        //log.info(request.getMethod() + ": " + request.getRequestURI());
         Controller controller = ControllerFactory.getController(request.getPathInfo());
-        log.info(controller);
         controller.doGet(request, response);
     }
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        //log.info(request.getMethod() + ": " + request.getRequestURI());
         Controller controller = ControllerFactory.getController(request.getPathInfo());
-        log.info(controller);
         controller.doPost(request, response);
     }
 }

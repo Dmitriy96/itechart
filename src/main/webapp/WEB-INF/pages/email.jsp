@@ -19,17 +19,17 @@
 
         <h1 class="page-header">Отправить email</h1>
 
-        <form role="form">
+        <form method="post" action="${pageContext.request.contextPath}/pages/email/send" role="form">
 
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group">
-                        <label for="recipient">Кому</label>
-                        <input type="text" class="form-control" id="recipient" value="${emails}" placeholder="Кому">
+                        <label for="recipients">Кому</label>
+                        <input type="text" class="form-control" id="recipients" value="${emails}" name="recipients" placeholder="Кому">
                     </div>
                     <div class="form-group">
                         <label for="subject">Тема</label>
-                        <input type="text" class="form-control" id="subject" placeholder="Тема">
+                        <input type="text" class="form-control" id="subject" name="subject" placeholder="Тема">
                     </div>
                     <div class="form-group">
                         <label for="template">Шаблон</label><br/>
@@ -38,8 +38,8 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="comment">Текст:</label>
-                        <textarea class="form-control" rows="12" id="comment"></textarea>
+                        <label for="text">Текст:</label>
+                        <textarea class="form-control" rows="12" id="text" name="text"></textarea>
                     </div>
                 </div>
             </div>

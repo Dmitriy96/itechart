@@ -6,6 +6,7 @@ import java.util.List;
 
 
 public interface ContactFindDao {
-    List<Contact> getContacts(int offset) throws DaoException;
+    List<Contact> getContacts(Integer offset) throws DaoException;
+    Contact getContact(Integer contactId) throws DaoException;
     List <String> getEmails(Integer contactId[]) throws DaoException;
 }

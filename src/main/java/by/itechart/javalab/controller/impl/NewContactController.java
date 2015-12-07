@@ -173,13 +173,11 @@ public class NewContactController implements Controller {
             phone.setOperatorCode(Integer.parseInt(formFields.get("operatorCode" + i)));
             phone.setPhoneNumber(Integer.parseInt(formFields.get("phoneNumber" + i)));
             String phoneType = formFields.get("phoneType" + i);
-            log.debug("phone type: " + formFields.get("phoneType" + i));
             for (PhoneType phoneTypeValue : PhoneType.values()) {
                 if (phoneTypeValue.name().equals(phoneType)) {
                     phone.setPhoneType(PhoneType.valueOf(phoneType));
                 }
             }
-            log.debug(phone.getPhoneType().name());
             phone.setComment(formFields.get("phoneComment" + i));
             contactPhones.add(phone);
             i++;

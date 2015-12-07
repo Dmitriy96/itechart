@@ -13,20 +13,39 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById("sendEmailButton").onclick = function() {
         var form = document.getElementById("contactsForm");
         form.setAttribute("action", this.getAttribute("href"));
+        form.setAttribute("method", "post");
         form.submit();
+        return false;
     };
 
     document.getElementById("deleteContactsButton").onclick = function() {
         var chosenCheckBox = table.querySelectorAll(':checked');
         if (chosenCheckBox && chosenCheckBox.length > 0) {
-            var checkDeleting = confirm("Действительно удалить выбранные номера?");
+            var checkDeleting = confirm("Р”РµР№СЃС‚РІРёС‚РµР»СЊРЅРѕ СѓРґР°Р»РёС‚СЊ РІС‹Р±СЂР°РЅРЅС‹Рµ РЅРѕРјРµСЂР°?");
             if (checkDeleting) {
                 var form = document.getElementById("contactsForm");
                 form.setAttribute("action", this.getAttribute("href"));
+                form.setAttribute("method", "post");
                 form.submit();
             }
         }
         else
-            alert("Пожалуйста, выберите контакты для удаления!");
+            alert("РџРѕР¶Р°Р»СѓР№СЃС‚Р°, РІС‹Р±РµСЂРёС‚Рµ РєРѕРЅС‚Р°РєС‚С‹ РґР»СЏ СѓРґР°Р»РµРЅРёСЏ!");
+        return false;
     };
+
+    var showContactButtons = document.getElementsByName("showContact");
+    var editContactButtons = document.getElementsByName("editContact");
+    for (var i = 0; i < showContactButtons.length; i++) {
+        showContactButtons[i].onclick = function() {
+            var form = document.getElementById("contactsForm");
+            form.setAttribute("action", this.getAttribute("data-url"));
+            form.submit();
+        };
+        editContactButtons[i].onclick = function() {
+            var form = document.getElementById("contactsForm");
+            form.setAttribute("action", this.getAttribute("data-url"));
+            form.submit();
+        };
+    }
 });

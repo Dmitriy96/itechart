@@ -56,7 +56,7 @@
                     <div class="form-group">
                         <label for="gender">Пол</label><br/>
                         <select id="gender" name="gender">
-                            <option value="NONE">--- Выбор ---</option>
+                            <option value="NONE" selected>--- Выбор ---</option>
                             <option value="MALE">Мужской</option>
                             <option value="FEMALE">Женский</option>
                         </select>

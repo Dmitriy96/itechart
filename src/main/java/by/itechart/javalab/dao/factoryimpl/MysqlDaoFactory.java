@@ -32,9 +32,4 @@ public final class MysqlDaoFactory extends DaoFactory {
     public ContactAttributes getContactAttributes() {
         return ContactAttributesMysqlDao.getInstance();
     }
-
-    @Override
-    public ContactFindDao getContactEmails() {
-        return ContactFindMysqlDao.getInstance();
-    }
 }

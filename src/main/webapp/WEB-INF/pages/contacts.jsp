@@ -23,7 +23,7 @@
 
         <hr>
 
-        <form id="contactsForm" method="post" action="${pageContext.request.contextPath}/pages/contacts" role="form">
+        <form id="contactsForm" role="form">
             <div class="row">
 
                 <div class="col-md-2 affix">
@@ -35,7 +35,7 @@
                             <a href="${pageContext.request.contextPath}/pages/search"><span class="glyphicon glyphicon-search"></span> Поиск контактов</a>
                         </li>
                         <li class="list-item">
-                            <a href="${pageContext.request.contextPath}/pages/contacts" id="deleteContactsButton"><span class="glyphicon glyphicon-search"></span> Удалить контакты</a>
+                            <a href="${pageContext.request.contextPath}/pages/contacts" id="deleteContactsButton"><span class="glyphicon glyphicon-trash"></span> Удалить контакты</a>
                         </li>
                         <li class="list-item">
                             <a href="${pageContext.request.contextPath}/pages/email" id="sendEmailButton"><span class="glyphicon glyphicon-envelope"></span> Отправить email</a>
@@ -84,10 +84,10 @@
                                         </td>
                                         <td>
                                             <div class="cell-alignment">
-                                                <button type="button" class="btn btn-info" title="Посмотреть">
+                                                <button type="button" name="showContact" class="btn btn-info" data-url="${pageContext.request.contextPath}/pages/contact/${contact.idContact}" title="Посмотреть">
                                                     <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
                                                 </button>
-                                                <button type="button" class="btn btn-warning" title="Редактировать">
+                                                <button type="button" name="editContact" class="btn btn-warning" data-url="${pageContext.request.contextPath}/pages/editContact/${contact.idContact}" title="Редактировать">
                                                     <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
                                                 </button>
                                             </div>
@@ -106,26 +106,17 @@
             <!-- Pagination -->
             <div class="row text-center">
                 <div class="col-lg-12">
-                    <ul class="pagination">
-                        <li>
-                            <a href="#">&laquo;</a>
-                        </li>
-                        <li class="active">
-                            <a href="#">1</a>
-                        </li>
-                        <li>
-                            <a href="#">2</a>
-                        </li>
-                        <li>
-                            <a href="#">3</a>
-                        </li>
-                        <li>
-                            <a href="#">&raquo;</a>
-                        </li>
+                    <ul class="pager">
+                        <li><a href="#" class="disabled">Предыдущая</a></li>
+                        <li><a href="#">Следующая</a></li>
                     </ul>
                 </div>
             </div>
         </form>
+        <div class="hidden">
+            <c:set var="hasNext" value="${hasNext}"/>
+
+        </div>
     </div>
 
     <script src="${pageContext.request.contextPath}/resources/js/contactsPage.js"></script>

@@ -12,7 +12,6 @@ import org.apache.logging.log4j.Logger;
 import javax.naming.NamingException;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public final class ContactFindMysqlDao implements ContactFindDao {
@@ -25,7 +24,7 @@ public final class ContactFindMysqlDao implements ContactFindDao {
     }
 
     @Override
-    public List<Contact> getContacts(int offset) throws DaoException {
+    public List<Contact> getContacts(Integer offset) throws DaoException {
         log.debug("getContacts: " + offset);
         Connection connection = null;
         PreparedStatement statement = null;
@@ -34,11 +33,11 @@ public final class ContactFindMysqlDao implements ContactFindDao {
         try {
             connection = PersistenceManager.createConnection();
             statement = connection.prepareStatement("select idContact, name, surname, birthday, " +
-                    " company, city, street, houseNumber, apartmentNumber from contact where idContact > " +
-                    "(select idContact from " +
-                    "((SELECT idContact from contact ORDER BY idContact ASC LIMIT " +
-                    offset * MAX_CONTACTS_NUMBER + ") as T) " +
-                    "ORDER BY idContact DESC limit 1) LIMIT " + MAX_CONTACTS_NUMBER);
+                    " company, city, street, houseNumber, apartmentNumber from contact where " +
+                    "idContact > ? AND enabled = ? LIMIT ?");
+            statement.setInt(1, offset);
+            statement.setBoolean(2, true);
+            statement.setInt(3, MAX_CONTACTS_NUMBER);
             resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 Contact contact = new Contact();
@@ -66,8 +65,61 @@ public final class ContactFindMysqlDao implements ContactFindDao {
     }
 
     @Override
+    public Contact getContact(Integer contactId) throws DaoException {
+        log.debug("getContact: " + contactId);
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        Contact contact = null;
+        try {
+            connection = PersistenceManager.createConnection();
+            statement = connection.prepareStatement("SELECT contact.idContact, contact.name, " +
+                    "contact.surname, contact.patronymic, contact.birthday, contact.gender, " +
+                    "contact.citizenship, contact.website, contact.email, contact.company, contact.maritalStatus, " +
+                    "country.fullName, contact.city, contact.street, contact.houseNumber, contact.apartmentNumber, contact.zipCode, " +
+                    "phone.countryCode, phone.operatorCode, phone.phoneNumber, phone.phoneType, " +
+                    "attachment.fileName, attachment.uploadDate, attachment.comment " +
+                    "FROM contact " +
+                    "JOIN country " +
+                    "ON contact.Country_idCountryCode = country.idCountryCode " +
+                    "JOIN phone\n" +
+                    "on phone.Contact_idContact = contact.idContact " +
+                    "JOIN attachment " +
+                    "on attachment.Contact_idContact = contact.idContact " +
+                    "WHERE contact.idContact = ? AND contact.enabled = ? and phone.enabled = ? and attachment.enabled = ?");
+            statement.setInt(1, contactId);
+            statement.setBoolean(2, true);
+            statement.setBoolean(3, true);
+            statement.setBoolean(4, true);
+            resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                // TODO set contact fields
+                contact = new Contact();
+                contact.setIdContact(resultSet.getLong("idContact"));
+                contact.setName(resultSet.getString("name"));
+                contact.setSurname(resultSet.getString("surname"));
+                contact.setBirthday(resultSet.getDate("birthday"));
+                contact.setCompany(resultSet.getString("company"));
+                Address address = new Address();
+                address.setCity(resultSet.getString("city"));
+                address.setStreet(resultSet.getString("street"));
+                address.setHouseNumber(resultSet.getString("houseNumber"));
+                address.setApartmentNumber(resultSet.getString("apartmentNumber"));
+                contact.setAddress(address);
+            }
+        } catch (NamingException | SQLException ex) {
+            log.error(ex);
+            throw new DaoException("Can't get contacts.", ex);
+        } finally {
+            closeStatement(statement);
+            PersistenceManager.closeConnection(connection);
+        }
+        return contact;
+    }
+
+
+    @Override
     public List<String> getEmails(Integer[] contactId) throws DaoException {
-        log.debug("getContacts: " + Arrays.asList(contactId).toString());
         Connection connection = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;

@@ -16,7 +16,7 @@ public class SearchContactsController implements Controller {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) {
         try {
-            request.getServletContext().getRequestDispatcher("/WEB-INF/search.jsp").forward(request, response);
+            request.getServletContext().getRequestDispatcher("/WEB-INF/pages/search.jsp").forward(request, response);
         } catch (ServletException | IOException e) {
             log.error(e);
         }

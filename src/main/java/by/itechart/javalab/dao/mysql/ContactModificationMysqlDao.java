@@ -13,7 +13,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.sql.*;
-import java.util.Arrays;
 
 public final class ContactModificationMysqlDao implements ContactModificationDao {
     private final static ContactModificationMysqlDao instance = new ContactModificationMysqlDao();
@@ -41,7 +40,6 @@ public final class ContactModificationMysqlDao implements ContactModificationDao
 
     @Override
     public void deleteContacts(Integer[] contactsId) throws DaoException {
-        log.debug("deleteContacts " + Arrays.asList(contactsId).toString());
         Connection connection = null;
         PreparedStatement statement = null;
         String tableName[] = {"phone", "attachment", "contact"};
@@ -120,7 +118,9 @@ public final class ContactModificationMysqlDao implements ContactModificationDao
                 statement.execute();
                 ResultSet resultSet = statement.getGeneratedKeys();
                 if (resultSet.next()) {
-                    phone.setIdPhone((long) resultSet.getInt(1));
+                    int id = resultSet.getInt(1);
+                    log.debug("saveContactPhones: " + id);
+                    phone.setIdPhone((long) id);
                 }
             }
         } catch (SQLException e) {
@@ -148,7 +148,9 @@ public final class ContactModificationMysqlDao implements ContactModificationDao
                 statement.execute();
                 ResultSet resultSet = statement.getGeneratedKeys();
                 if (resultSet.next()) {
-                    attachment.setIdAttachment((long) resultSet.getInt(1));
+                    int id = resultSet.getInt(1);
+                    log.debug("saveContactAttachments: " + id);
+                    attachment.setIdAttachment((long) id);
                 }
             }
         } catch (SQLException e) {

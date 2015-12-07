@@ -22,9 +22,10 @@ public class ContactsController implements Controller {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) {
+        log.debug("doGet: " + request.getParameter("page"));
         List<Contact> contacts = new ArrayList<>();
         try {
-            Integer page = 0;
+            Integer page = 1;
             if (StringUtils.isNotEmpty(request.getParameter("page"))) {
                 page = Integer.parseInt(request.getParameter("page"));
             }

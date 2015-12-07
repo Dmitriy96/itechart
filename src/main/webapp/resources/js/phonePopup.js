@@ -82,12 +82,12 @@ document.addEventListener('DOMContentLoaded', function(){
             var phoneData = [];
             for (var i = 0; i < phoneDataInputIDs.length; i++) {
                 phoneData[i] = document.getElementById(phoneDataInputIDs[i]).value;
-                console.log("values: " + phoneData[i])
             }
+            var checkbox = document.getElementById("phoneType");
 
             var rowData = newRow.getElementsByClassName('cell-text-alignment');
             rowData[0].innerHTML = phoneData[0] + "" + phoneData[1] + "" + phoneData[2];
-            rowData[1].innerHTML = phoneData[4];
+            rowData[1].innerHTML = checkbox.options[checkbox.selectedIndex].innerHTML;
             rowData[2].innerHTML = phoneData[3];
             var hiddenInputList = document.getElementById('hiddenInputList');
             for (i = 0; i < phoneData.length; i++) {

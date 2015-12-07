@@ -17,6 +17,7 @@ public class ModificationContactService {
     private static Logger log = LogManager.getLogger(ModificationContactService.class.getName());
 
     public static Contact addNewContact(Contact contact) throws ServiceException {
+        log.debug("addNewContact: " + contact.getSurname() + " " + contact.getEmail());
         Contact savedContact = null;
         try {
             DaoFactory daoFactory = DaoFactory.getDaoFactory();
@@ -40,6 +41,7 @@ public class ModificationContactService {
     }
 
     public static void deleteContacts(Integer contactsId[]) throws ServiceException {
+        log.debug("deleteContacts: ");
         try {
             DaoFactory daoFactory = DaoFactory.getDaoFactory();
             ContactModificationDao modificationDao = daoFactory.getContactModificationDao();
