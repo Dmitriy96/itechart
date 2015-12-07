@@ -1,0 +1,91 @@
+/* очень полезный элемент в каждой верстке - вставка такого элемента обеспечит нам
+гарантированно новую строку, какие бы float элементы у нас не были в текущем контейнере*/
+#birthday {
+    width: 150px;
+}
+
+div.calendarHolder .clear {
+    clear:both;
+    height:1px;
+    line-height:1px;
+    font-size:1px;
+}
+/* растянем input по ширине calendarHolder */
+div.calendarHolder input {
+    width: 100%;
+    text-align: center;
+}
+/*область календарика - рамочка, мелкий шрифт, изначально - спрятан */
+div.widgetCalendar {
+    position: absolute;
+    border: 1px solid #888;
+    font-size: 16px;
+    font-family: arial;
+    padding: 0px 0px 10px 30px;
+    clear:left;
+    width: 100%;
+    z-index: 10000000;
+    display: none;
+    background-color: #FFF;
+}
+/*первый конейнер для формирования дня - нужен для задания общей ширины
+а именно 100% ширины / 7 дней = 14.28...%*/
+div.widgetCalendar .dayH {
+    width: 14%;
+    float: left;
+    text-align: center;
+    padding-top: 1px;
+    display: block;
+}
+/*день месяца с фиксированной шириной*/
+div.widgetCalendar .day {
+    display: block;
+    width: 21px;
+    text-align: right;
+    color: #000;
+    text-decoration: none;
+}
+/*прокрутки для месяца и года*/
+div.widgetCalendar .monthTab {
+    font-size: 18px;
+    margin: 0px 0px 5px 0px;
+    width: 50%;
+    clear: none;
+    float: left;
+}
+div.widgetCalendar .monthSlide {
+    text-decoration: none;
+    color: #000;
+    font-weight: bold;
+    cursor: pointer;
+    width: 20%;
+    float: left;
+}
+/*реакция на перекрытие курсором активных полей (день или прокрутка месяца и года)*/
+div.widgetCalendar .day:hover,
+div.widgetCalendar .monthSlide:hover {
+    background-color:#d8dfea;
+    cursor: pointer;
+}
+/*дополнительные стили для текущего дня*/
+div.widgetCalendar .curr {
+    font-weight: bolder;
+    background-color: #D5D5D5;
+}
+/*дополнительные стили для дней из других месяцев, попавших к нам в календарь */
+div.widgetCalendar .nonM {
+    color: #eee;
+}
+/*кнопочка - закрыть, спецаиальное отрицательное смещение margin позволяется нам заползти
+в область padding родительского конетейнера и визуально примкнуть к рамочке*/
+div.widgetCalendar .close {
+    float:right;
+    clear:both;
+    padding:1px 5px 2px 5px;
+    background-color: #666;
+    margin: 0px;
+    /*margin-top:-3px;
+    margin-right:-3px;*/
+    color: #fff;
+    cursor: pointer;
+}

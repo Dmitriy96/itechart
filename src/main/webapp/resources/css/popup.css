@@ -1,0 +1,141 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/*Image popup*/
+
+#image-popup-form {
+    display: inline-block;
+    padding: 5px 5px 5px 40px;
+    width: 500px;
+    min-height: 250px;
+    border: 1px solid black;
+    background: white;
+    vertical-align: middle;
+}
+
+#image-popup-form-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+    display: none;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+}
+
+#image-popup-form-container:before {
+    display: inline-block;
+    height: 100%;
+    content: '';
+    vertical-align: middle;
+}
+
+#cover-div {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9000;
+    width: 100%;
+    height: 100%;
+    background-color: gray;
+    opacity: 0.3;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+.clickable:hover {
+    box-shadow: 0 0 5px 2px;
+}
+
+#imageInput {
+    display: none;
+}
+
+.img-centralize {
+    display: block;
+    margin: 0 auto;
+    padding: 10px;
+}
+
+/*Phone popup*/
+
+#phone-popup-form {
+    display: inline-block;
+    padding: 5px 5px 5px 40px;
+    width: 580px;
+    min-height: 700px;
+    border: 1px solid black;
+    background: white;
+    vertical-align: middle;
+}
+
+#phone-popup-form-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+    display: none;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+}
+
+#phone-popup-form-container:before {
+    display: inline-block;
+    height: 100%;
+    content: '';
+    vertical-align: middle;
+}
+
+.popup-input-block {
+    text-align: left;
+}
+
+.popup-input-block div {
+    width: 500px;
+}
+
+#tableRow {
+    display: none;
+}
+
+/*Attachment popup*/
+
+#attachment-popup-form {
+    display: inline-block;
+    padding: 5px 5px 5px 40px;
+    width: 580px;
+    min-height: 700px;
+    border: 1px solid black;
+    background: white;
+    vertical-align: middle;
+}
+
+#attachment-popup-form-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+    display: none;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+}
+
+#attachment-popup-form-container:before {
+    display: inline-block;
+    height: 100%;
+    content: '';
+    vertical-align: middle;
+}
+
+#attachmentInput {
+    display: none;
+}

@@ -1,0 +1,44 @@
+<web-app id="WebApp_ID" version="2.4"
+         xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
+	http://java.sun.com/xml/ns/j2ee/web-app_2_5.xsd">
+
+    <display-name>ContactsCatalog</display-name>
+
+    <resource-ref>
+        <description>MySQL Datasource</description>
+        <res-ref-name>jdbc/MySQL</res-ref-name>
+        <res-type>javax.sql.DataSource</res-type>
+        <res-auth>Container</res-auth>
+    </resource-ref>
+
+    <filter>
+        <filter-name>filter</filter-name>
+        <filter-class>by.itechart.javalab.filter.RequestFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>filter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <context-param>
+        <param-name>attachmentsDirectory</param-name>
+        <param-value>C:\Users\Dmitriy\Documents\Installers\Apache Tomcat\apache-tomcat-7.0.65\webapps\ContactsCatalog\resources\files</param-value>
+    </context-param>
+    <context-param>
+        <param-name>imagesDirectory</param-name>
+        <param-value>C:\Users\Dmitriy\Documents\Installers\Apache Tomcat\apache-tomcat-7.0.65\webapps\ContactsCatalog\resources\images</param-value>
+    </context-param>
+
+    <servlet>
+        <servlet-name>ContactsServlet</servlet-name>
+        <servlet-class>by.itechart.javalab.servlet.FrontController</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>ContactsServlet</servlet-name>
+        <url-pattern>/pages/*</url-pattern>
+    </servlet-mapping>
+
+</web-app>
