@@ -337,3 +337,7 @@ ALTER TABLE `dmitriysanko`.`country`
 DROP COLUMN `alpha3`,
 DROP COLUMN `alpha2`,
 DROP COLUMN `name`;
+
+
+ALTER TABLE `dmitriysanko`.`phone` 
+ADD COLUMN `comment` VARCHAR(5000) NULL AFTER `phoneType`;

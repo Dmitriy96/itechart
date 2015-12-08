@@ -88,7 +88,7 @@ public final class ContactModificationMysqlDao implements ContactModificationDao
             statement.setString(12, contact.getAddress().getStreet());
             statement.setString(13, contact.getAddress().getHouseNumber());
             statement.setString(14, contact.getAddress().getApartmentNumber());
-            statement.setInt(15, contact.getAddress().getIndex());
+            statement.setInt(15, contact.getAddress().getZipCode());
             statement.setString(16, contact.getAddress().getCountry().toUpperCase());
             statement.execute();
             ResultSet resultSet = statement.getGeneratedKeys();

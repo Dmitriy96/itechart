@@ -209,10 +209,10 @@
 
             <div class="row">
                 <div class="col-md-3 col-md-offset-3 text-center">
-                    <button type="submit" name="save" class="btn btn-success btn-lg button-size">Сохранить</button>
+                    <button type="submit" id="saveContactButton" name="save" class="btn btn-success btn-lg button-size">Сохранить</button>
                 </div>
                 <div class="col-md-1 text-center">
-                    <button type="submit" name="cancel" class="btn btn-info btn-lg button-size">Отмена</button>
+                    <button type="submit" id="cancelContactButton" name="cancel" class="btn btn-info btn-lg button-size">Отмена</button>
                 </div>
             </div>
 
@@ -310,8 +310,10 @@
                 </tr>
             </table>
 
-            <!--Block of hidden inputs, which contain data from tables-->
-            <div id="hiddenInputList" class="hidden">
+            <!--Blocks of hidden inputs, which contain data from tables-->
+            <div id="hiddenPhonesInputList" class="hidden">
+            </div>
+            <div id="hiddenAttachmentsInputList" class="hidden">
             </div>
 
         </form>
@@ -321,8 +323,9 @@
     <div class="page-bottom"></div>
 
     <script src="${pageContext.request.contextPath}/resources/js/imagePopup.js"></script>
-    <script src="${pageContext.request.contextPath}/resources/js/phonePopup.js"></script>
-    <script src="${pageContext.request.contextPath}/resources/js/attachmentPopup.js"></script>
+    <script src="${pageContext.request.contextPath}/resources/js/newContact/newContactPage.js"></script>
+    <script src="${pageContext.request.contextPath}/resources/js/newContact/newContactPhonePopup.js"></script>
+    <script src="${pageContext.request.contextPath}/resources/js/newContact/newContactAttachmentPopup.js"></script>
     <script src="${pageContext.request.contextPath}/resources/js/calendar.js"></script>
 
 </body>

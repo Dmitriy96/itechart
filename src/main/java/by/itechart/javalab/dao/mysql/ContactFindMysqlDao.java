@@ -3,8 +3,7 @@ package by.itechart.javalab.dao.mysql;
 
 import by.itechart.javalab.dao.ContactFindDao;
 import by.itechart.javalab.dao.DaoException;
-import by.itechart.javalab.entity.Address;
-import by.itechart.javalab.entity.Contact;
+import by.itechart.javalab.entity.*;
 import by.itechart.javalab.persistence.PersistenceManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -77,8 +76,8 @@ public final class ContactFindMysqlDao implements ContactFindDao {
                     "contact.surname, contact.patronymic, contact.birthday, contact.gender, " +
                     "contact.citizenship, contact.website, contact.email, contact.company, contact.maritalStatus, " +
                     "country.fullName, contact.city, contact.street, contact.houseNumber, contact.apartmentNumber, contact.zipCode, " +
-                    "phone.countryCode, phone.operatorCode, phone.phoneNumber, phone.phoneType, " +
-                    "attachment.fileName, attachment.uploadDate, attachment.comment " +
+                    "phone.idPhone, phone.countryCode, phone.operatorCode, phone.phoneNumber, phone.phoneType, phone.comment" +
+                    "attachment.idAttachment, attachment.fileName, attachment.uploadDate, attachment.comment " +
                     "FROM contact " +
                     "JOIN country " +
                     "ON contact.Country_idCountryCode = country.idCountryCode " +
@@ -92,21 +91,42 @@ public final class ContactFindMysqlDao implements ContactFindDao {
             statement.setBoolean(3, true);
             statement.setBoolean(4, true);
             resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                // TODO set contact fields
-                contact = new Contact();
-                contact.setIdContact(resultSet.getLong("idContact"));
-                contact.setName(resultSet.getString("name"));
-                contact.setSurname(resultSet.getString("surname"));
-                contact.setBirthday(resultSet.getDate("birthday"));
-                contact.setCompany(resultSet.getString("company"));
+            contact = new Contact();
+            List<ContactPhone> phones = new ArrayList<>();
+            List<ContactAttachment> attachments = new ArrayList<>();
+            if (resultSet.next()) {
+                contact.setIdContact(resultSet.getLong("contact.idContact"));
+                contact.setName(resultSet.getString("contact.name"));
+                contact.setSurname(resultSet.getString("contact.surname"));
+                contact.setPatronymic(resultSet.getString("contact.patronymic"));
+                contact.setBirthday(resultSet.getDate("contact.birthday"));
+                contact.setGender(Gender.valueOf(resultSet.getString("contact.gender")));
+                contact.setCitizenship(resultSet.getString("contact.citizenship"));
+                contact.setWebsite(resultSet.getString("contact.website"));
+                contact.setEmail(resultSet.getString("contact.email"));
+                contact.setCompany(resultSet.getString("contact.company"));
+                contact.setMaritalStatus(MaritalStatus.valueOf(resultSet.getString("contact.maritalStatus")));
                 Address address = new Address();
-                address.setCity(resultSet.getString("city"));
-                address.setStreet(resultSet.getString("street"));
-                address.setHouseNumber(resultSet.getString("houseNumber"));
-                address.setApartmentNumber(resultSet.getString("apartmentNumber"));
+                address.setCountry(resultSet.getString("country.fullName"));
+                address.setCity(resultSet.getString("contact.city"));
+                address.setStreet(resultSet.getString("contact.street"));
+                address.setHouseNumber(resultSet.getString("contact.houseNumber"));
+                address.setApartmentNumber(resultSet.getString("contact.apartmentNumber"));
+                address.setZipCode(resultSet.getInt("contact.zipCode"));
                 contact.setAddress(address);
+                ContactPhone phone = getContactPhone(resultSet);
+                phones.add(phone);
+                ContactAttachment attachment = getContactAttachment(resultSet);
+                attachments.add(attachment);
             }
+            while (resultSet.next()) {
+                ContactPhone phone = getContactPhone(resultSet);
+                phones.add(phone);
+                ContactAttachment attachment = getContactAttachment(resultSet);
+                attachments.add(attachment);
+            }
+            contact.setPhoneList(phones);
+            contact.setAttachmentList(attachments);
         } catch (NamingException | SQLException ex) {
             log.error(ex);
             throw new DaoException("Can't get contacts.", ex);
@@ -117,6 +137,25 @@ public final class ContactFindMysqlDao implements ContactFindDao {
         return contact;
     }
 
+    private ContactPhone getContactPhone(ResultSet resultSet) throws SQLException{
+        ContactPhone phone = new ContactPhone();
+        phone.setIdPhone(resultSet.getLong("phone.idPhone"));
+        phone.setCountryCode(resultSet.getInt("phone.countryCode"));
+        phone.setOperatorCode(resultSet.getInt("phone.operatorCode"));
+        phone.setPhoneNumber(resultSet.getInt("phone.phoneNumber"));
+        phone.setPhoneType(PhoneType.valueOf(resultSet.getString("phone.phoneType")));
+        phone.setComment(resultSet.getString("phone.comment"));
+        return phone;
+    }
+
+    private ContactAttachment getContactAttachment(ResultSet resultSet) throws SQLException {
+        ContactAttachment attachment = new ContactAttachment();
+        attachment.setIdAttachment(resultSet.getLong("attachment.idAttachment"));
+        attachment.setFileName(resultSet.getString("attachment.fileName"));
+        attachment.setUploadDate(resultSet.getDate("attachment.uploadDate"));
+        attachment.setComment(resultSet.getString("attachment.comment"));
+        return attachment;
+    }
 
     @Override
     public List<String> getEmails(Integer[] contactId) throws DaoException {

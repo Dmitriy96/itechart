@@ -43,7 +43,7 @@ public class NewContactController implements Controller {
     public void doPost(HttpServletRequest request, HttpServletResponse response) {
         boolean isMultipart = ServletFileUpload.isMultipartContent(request);
         if (!isMultipart) {
-            log.debug("Not multipart type request: " + request.getRequestURI());
+            log.debug("Not multipart type request: " + request.getRequestURI() + " " + request.getContentType());
             return;
         }
         DiskFileItemFactory factory = new DiskFileItemFactory();
@@ -112,7 +112,6 @@ public class NewContactController implements Controller {
         }
     }
 
-
     private void ensureDirectoryExists(String directory) {
         File uploadDir = new File(directory);
         if (!uploadDir.exists()) {
@@ -160,7 +159,7 @@ public class NewContactController implements Controller {
         address.setStreet(formFields.get("street"));
         address.setHouseNumber(formFields.get("houseNumber"));
         address.setApartmentNumber(formFields.get("apartmentNumber"));
-        address.setIndex(Integer.parseInt(formFields.get("zipCode")));
+        address.setZipCode(Integer.parseInt(formFields.get("zipCode")));
         contact.setAddress(address);
     }
 

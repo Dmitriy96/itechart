@@ -95,8 +95,8 @@
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label for="index">Индекс</label>
-                        <input type="text" class="form-control" id="index" placeholder="Индекс">
+                        <label for="zipCode">Индекс</label>
+                        <input type="text" class="form-control" id="zipCode" placeholder="Индекс">
                     </div>
                     <div class="form-group">
                         <label for="apartmentNumber">Квартира</label>

@@ -30,17 +30,17 @@ public class FindContactService {
     }
 
     public static Contact getContact(Integer contactId) throws ServiceException {
-        log.debug("getContacts: " + offset);
-        List<Contact> contacts = new ArrayList<>();
+        log.debug("getContacts: " + contactId);
+        Contact contact = null;
         try {
             DaoFactory daoFactory = DaoFactory.getDaoFactory();
             ContactFindDao findDao = daoFactory.getContactFindDao();
-            contacts = findDao.getContacts(offset);
+            contact = findDao.getContact(contactId);
         } catch (DaoException ex) {
             log.error(ex);
             throw new ServiceException(ex);
         }
-        return contacts;
+        return contact;
     }
 
     public static List<String> getEmails(Integer contactsID[]) throws ServiceException {

@@ -19,7 +19,7 @@
 
         <div class="row page-header">
             <div class="col-md-9">
-                <h1>Иванов Иван Иванович</h1>
+                <h1><c:out value="${contact.surname}"> <c:out value="${contact.name}"> <c:out value="${contact.patronymic}"></h1>
             </div>
             <div class="col-md-3 control-buttons-alignment">
                 <button type="button" class="btn btn-primary" title="Назад">
@@ -33,25 +33,29 @@
 
         <div class="row">
             <div class="col-md-3">
-                <img class="img-responsive" src="../../resources/images/default_avatar.png" alt="">
+                <img id="image"
+                class="img-responsive clickable"
+                src='${pageContext.request.contextPath}/resources/images/${contact.idContact}.jpg'
+                alt=""
+                onerror='${pageContext.request.contextPath}/resources/images/default_avatar.png'>
             </div>
             <div class="col-md-4">
                 <ul class="group-text-block">
                     <li class="text-block">
                         <h3>Дата рождения</h3>
-                        <p>01 января 1980</p>
+                        <p><c:out value="${contact.birthday}"/> </p>
                     </li>
                     <li class="text-block">
                         <h3>Пол</h3>
-                        <p>мужской</p>
+                        <p><c:out value="${contact.gender}"/></p>
                     </li>
                     <li class="text-block">
                         <h3>Гражданство</h3>
-                        <p>РБ</p>
+                        <p><c:out value="${contact.citizenship}"/></p>
                     </li>
                     <li class="text-block">
                         <h3>Семейное положение</h3>
-                        <p>холост</p>
+                        <p><c:out value="${contact.maritalStatus}"/></p>
                     </li>
                 </ul>
             </div>
@@ -59,15 +63,15 @@
                 <ul class="group-text-block">
                     <li class="text-block">
                         <h3>Web Site</h3>
-                        <p>www.website.my</p>
+                        <p><c:out value="${contact.website}"/></p>
                     </li>
                     <li class="text-block">
                         <h3>Email</h3>
-                        <p>myemail@mail.my</p>
+                        <p><c:out value="${contact.email}"/></p>
                     </li>
                     <li class="text-block">
                         <h3>Место работы</h3>
-                        <p>iTechArt</p>
+                        <p><c:out value="${contact.company}"/></p>
                     </li>
                 </ul>
             </div>
@@ -78,10 +82,7 @@
         <div class="row">
             <h2>Адрес</h2>
             <ul>
-                <li>Беларусь, г. Минск, ул. Независимости, д. 1, кв. 1, индекс 351001</li>
-            </ul>
-            <ul>
-                <li>Беларусь, г. Минск, ул. Независимости, д. 1, кв. 1, индекс 351001</li>
+                <li><c:out value="${contact.address.country}"/>, г. <c:out value="${contact.address.city}"/>, ул. <c:out value="${contact.address.street}"/>, д. <c:out value="${contact.address.houseNumber}"/>, кв. <c:out value="${contact.address.apartmentNumber}"/>, индекс <c:out value="${contact.address.zipCode}"/></li>
             </ul>
         </div>
 
@@ -93,78 +94,26 @@
 
         <div class="row">
             <table class="table table-hover">
-                <tr>
-                    <td>
-                        <div class="checkbox cell-alignment">
-                            <label>
-                                <input type="checkbox" value="1" aria-label="...">
-                            </label>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="cell-text-alignment"><a href="">+375293333333</a></div>
-                    </td>
-                    <td>
-                        <div class="cell-text-alignment">Мобильный</div>
-                    </td>
-                    <td>
-                        <div class="cell-text-alignment">Не звонить после 10</div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="checkbox cell-alignment">
-                            <label>
-                                <input type="checkbox" value="1" aria-label="...">
-                            </label>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="cell-text-alignment"><a href="">1234567</a></div>
-                    </td>
-                    <td>
-                        <div class="cell-text-alignment">Домашний</div>
-                    </td>
-                    <td>
-                        <div class="cell-text-alignment"></div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="checkbox cell-alignment">
-                            <label>
-                                <input type="checkbox" value="1" aria-label="...">
-                            </label>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="cell-text-alignment"><a href="">8765432</a></div>
-                    </td>
-                    <td>
-                        <div class="cell-text-alignment">Домашний</div>
-                    </td>
-                    <td>
-                        <div class="cell-text-alignment">не звонить после 10</div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="checkbox cell-alignment">
-                            <label>
-                                <input type="checkbox" value="1" aria-label="...">
-                            </label>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="cell-text-alignment"><a href="">+375297654321</a></div>
-                    </td>
-                    <td>
-                        <div class="cell-text-alignment">Мобильный</div>
-                    </td>
-                    <td>
-                        <div class="cell-text-alignment"></div>
-                    </td>
-                </tr>
+                <c:forEach items="${contact.phoneList}" var="phone">
+                    <tr>
+                        <td>
+                            <div class="checkbox cell-alignment">
+                                <label>
+                                    <input type="checkbox" value="${phone.idPhone}">
+                                </label>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="cell-text-alignment"><a href="">+<c:out value="${phone.countryCode}"/><c:out value="${phone.operatorCode}"/><c:out value="${phone.phoneNumber}"/></a></div>
+                        </td>
+                        <td>
+                            <div class="cell-text-alignment"><c:out value="${phone.phoneType}"/></div>
+                        </td>
+                        <td>
+                            <div class="cell-text-alignment"><c:out value="${phone.comment}"/></div>
+                        </td>
+                    </tr>
+                </c:forEach>
             </table>
         </div>
 
@@ -175,78 +124,26 @@
 
         <div class="row">
             <table class="table table-hover">
-                <tr>
-                    <td>
-                        <div class="checkbox cell-alignment">
-                            <label>
-                                <input type="checkbox" value="1" aria-label="...">
-                            </label>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="cell-text-alignment"><a href="">FileName</a></div>
-                    </td>
-                    <td>
-                        <div class="cell-text-alignment">01.01.1980</div>
-                    </td>
-                    <td>
-                        <div class="cell-text-alignment">Время учёбы</div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="checkbox cell-alignment">
-                            <label>
-                                <input type="checkbox" value="2" aria-label="...">
-                            </label>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="cell-text-alignment"><a href="">FileName2</a></div>
-                    </td>
-                    <td>
-                        <div class="cell-text-alignment">01.01.1980</div>
-                    </td>
-                    <td>
-                        <div class="cell-text-alignment"></div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="checkbox cell-alignment">
-                            <label>
-                                <input type="checkbox" value="3" aria-label="...">
-                            </label>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="cell-text-alignment"><a href="">FileName3</a></div>
-                    </td>
-                    <td>
-                        <div class="cell-text-alignment">01.01.1980</div>
-                    </td>
-                    <td>
-                        <div class="cell-text-alignment">Время работы</div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="checkbox cell-alignment">
-                            <label>
-                                <input type="checkbox" value="4" aria-label="...">
-                            </label>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="cell-text-alignment"><a href="">FileName4</a></div>
-                    </td>
-                    <td>
-                        <div class="cell-text-alignment">01.01.1980</div>
-                    </td>
-                    <td>
-                        <div class="cell-text-alignment"></div>
-                    </td>
-                </tr>
+                <c:forEach items="${contact.attachmentList}" var="attachment">
+                    <tr>
+                        <td>
+                            <div class="checkbox cell-alignment">
+                                <label>
+                                    <input type="checkbox" value="${attachment.idAttachment}">
+                                </label>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="cell-text-alignment"><a href=""><c:out value="${attachment.fileName}"/></a></div>
+                        </td>
+                        <td>
+                            <div class="cell-text-alignment"><c:out value="${attachment.uploadDate}"/></div>
+                        </td>
+                        <td>
+                            <div class="cell-text-alignment"><c:out value="${attachment.comment}"/></div>
+                        </td>
+                    </tr>
+                </c:forEach>
             </table>
         </div>
 

@@ -6,6 +6,7 @@ import java.util.Date;
 public class ContactAttachment {
     private Long idAttachment;
     private String fileName;
+    private String storedFileName;
     private Date uploadDate;
     private String comment;
 
@@ -23,6 +24,14 @@ public class ContactAttachment {
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    public String getStoredFileName() {
+        return storedFileName;
+    }
+
+    public void setStoredFileName(String storedFileName) {
+        this.storedFileName = storedFileName;
     }
 
     public Date getUploadDate() {

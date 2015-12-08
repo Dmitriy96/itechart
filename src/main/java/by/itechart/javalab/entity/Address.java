@@ -8,7 +8,7 @@ public class Address {
     private String street;
     private String houseNumber;
     private String apartmentNumber;
-    private Integer index;
+    private Integer zipCode;
 
     public Long getIdAddress() {
         return idAddress;
@@ -58,11 +58,11 @@ public class Address {
         this.apartmentNumber = apartmentNumber;
     }
 
-    public Integer getIndex() {
-        return index;
+    public Integer getZipCode() {
+        return zipCode;
     }
 
-    public void setIndex(Integer index) {
-        this.index = index;
+    public void setZipCode(Integer zipCode) {
+        this.zipCode = zipCode;
     }
 }
