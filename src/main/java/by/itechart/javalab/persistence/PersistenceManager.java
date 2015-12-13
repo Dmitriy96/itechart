@@ -21,6 +21,8 @@ public class PersistenceManager {
     private static ConcurrentMap<Long, Savepoint> savepointMap = new ConcurrentHashMap<>();
     private static final String dataSourceName;
 
+    private PersistenceManager() {}
+
     static {
         Properties properties = new Properties();
         try {

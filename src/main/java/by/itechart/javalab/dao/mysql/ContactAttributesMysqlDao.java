@@ -13,9 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class ContactAttributesMysqlDao implements ContactAttributes {
+public final class ContactAttributesMysqlDao implements ContactAttributes {
     private final static ContactAttributesMysqlDao instance = new ContactAttributesMysqlDao();
     private static Logger log = LogManager.getLogger(ContactAttributesMysqlDao.class.getName());
+
+    private ContactAttributesMysqlDao() {}
 
     public static ContactAttributesMysqlDao getInstance(){
         return instance;

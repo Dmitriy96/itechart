@@ -1,3 +1,6 @@
+create database dmitriysanko;
+use dmitriysanko;
+
 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
@@ -21,7 +24,7 @@ CREATE TABLE IF NOT EXISTS `dmitriysanko`.`Contact` (
   `houseNumber` VARCHAR(150) NOT NULL,
   `apartmentNumber` VARCHAR(45) NULL DEFAULT NULL,
   `zipCode` INT(11) NULL DEFAULT NULL,
-  `enabled` BIT(1) NOT NULL DEFAULT 1,
+  `available` BIT(1) NOT NULL DEFAULT 1,
   `Country_idCountryCode` INT(11) NOT NULL,
   PRIMARY KEY (`idContact`),
   INDEX `fk_Contact_Country1_idx` (`Country_idCountryCode` ASC),
@@ -34,13 +37,14 @@ ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `dmitriysanko`.`Attachment` (
-  `idAttachments` INT(11) NOT NULL AUTO_INCREMENT,
-  `fileName` VARCHAR(150) NOT NULL,
+  `idAttachment` INT(11) NOT NULL AUTO_INCREMENT,
+  `fileName` VARCHAR(100) NOT NULL,
   `uploadDate` DATE NOT NULL,
   `comment` VARCHAR(5000) NULL DEFAULT NULL,
+  `realFileName` VARCHAR(100) NULL DEFAULT NULL,
   `Contact_idContact` INT(11) NOT NULL,
-  `enabled` BIT(1) NOT NULL DEFAULT 1,
-  PRIMARY KEY (`idAttachments`, `Contact_idContact`),
+  `available` BIT(1) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`idAttachment`, `Contact_idContact`),
   INDEX `fk_Attachment_Contact1_idx` (`Contact_idContact` ASC),
   CONSTRAINT `fk_Attachment_Contact1`
     FOREIGN KEY (`Contact_idContact`)
@@ -56,8 +60,9 @@ CREATE TABLE IF NOT EXISTS `dmitriysanko`.`Phone` (
   `operatorCode` INT(10) UNSIGNED NULL DEFAULT NULL,
   `phoneNumber` INT(10) UNSIGNED NOT NULL,
   `phoneType` VARCHAR(45) NOT NULL,
+  `comment` VARCHAR(5000) NULL DEFAULT NULL,
   `Contact_idContact` INT(11) NOT NULL,
-  `enabled` BIT(1) NOT NULL DEFAULT 1,
+  `available` BIT(1) NOT NULL DEFAULT 1,
   PRIMARY KEY (`idPhone`),
   INDEX `fk_Phone_Contact1_idx` (`Contact_idContact` ASC),
   CONSTRAINT `fk_Phone_Contact1`
@@ -84,8 +89,7 @@ SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 
 
-
-INSERT INTO `country` (`idCountryCode`, `name`, `fullName`, `alpha2`, `alpha3`) VALUES
+INSERT INTO `countries` (`code`, `name`, `fullname`, `alpha2`, `alpha3`) VALUES
 (36, '¿¬—“–¿À»ﬂ', '¿¬—“–¿À»ﬂ', 'AU', 'AUS'),
 (40, '¿¬—“–»ﬂ', '¿¬—“–»…— ¿ﬂ –≈—œ”¡À» ¿', 'AT', 'AUT'),
 (31, '¿«≈–¡¿…ƒ∆¿Õ', '–≈—œ”¡À» ¿ ¿«≈–¡¿…ƒ∆¿Õ', 'AZ', 'AZE'),
@@ -332,12 +336,9 @@ INSERT INTO `country` (`idCountryCode`, `name`, `fullName`, `alpha2`, `alpha3`) 
 (392, 'ﬂœŒÕ»ﬂ', 'ﬂœŒÕ»ﬂ', 'JP', 'JPN');
 
 
-
 ALTER TABLE `dmitriysanko`.`country` 
 DROP COLUMN `alpha3`,
 DROP COLUMN `alpha2`,
 DROP COLUMN `name`;
-
-
-ALTER TABLE `dmitriysanko`.`phone` 
-ADD COLUMN `comment` VARCHAR(5000) NULL AFTER `phoneType`;
+ALTER TABLE `dmitriysanko`.`country` 
+ADD INDEX `countryIndex` (`fullName` ASC, `idCountryCode` ASC);

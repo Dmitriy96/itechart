@@ -30,6 +30,7 @@ public class ContactsController implements Controller {
                 page = Integer.parseInt(request.getParameter("page"));
             }
             contacts = FindContactService.getContacts(page);
+            log.debug("contacts list size: " + contacts.size());
             request.setAttribute("contacts", contacts);
             request.getServletContext().getRequestDispatcher("/WEB-INF/pages/contacts.jsp").forward(request, response);
         } catch (ServiceException | ServletException | IOException | NumberFormatException e) {

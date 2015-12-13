@@ -31,7 +31,6 @@ public class NewContactController implements Controller {
     public void doGet(HttpServletRequest request, HttpServletResponse response) {
         try {
             List<String> countries = ContactAttributesService.getAllCountries();
-            Collections.sort(countries);
             request.setAttribute("countries", countries);
             request.getServletContext().getRequestDispatcher("/WEB-INF/pages/newContact.jsp").forward(request, response);
         } catch (ServiceException | ServletException | IOException e) {
@@ -54,6 +53,7 @@ public class NewContactController implements Controller {
         ServletFileUpload upload = new ServletFileUpload(factory);
         upload.setFileSizeMax(MAX_FILE_SIZE);
         upload.setSizeMax(MAX_REQUEST_SIZE);
+        upload.setHeaderEncoding("UTF-8");
 
         List<FileItem> items = null;
         try {
@@ -69,7 +69,7 @@ public class NewContactController implements Controller {
                 }
             }
         } catch (Exception ex) {
-            log.error(ex.getMessage());
+            log.error(ex);
             return;
         }
         Contact contact = null;
@@ -77,6 +77,9 @@ public class NewContactController implements Controller {
         try {
             contact = createContact();
             savedContact = ModificationContactService.addNewContact(contact);
+            for (ContactAttachment attachment : savedContact.getAttachmentList()) {
+                log.debug("saved attachment id: " + attachment.getIdAttachment() + " " + attachment.getFileName());
+            }
         } catch (ParseException | ServiceException e) {
             log.error(e);
             return;
@@ -91,24 +94,33 @@ public class NewContactController implements Controller {
             Iterator<FileItem> iterator = items.iterator();
             while (iterator.hasNext()) {
                 FileItem item = iterator.next();
-                String fileName = item.getName();
+                String realFileName = item.getName();
+                String fieldName = item.getFieldName();
+                log.debug("file name: " + realFileName);
                 String filePath = null;
                 if ("userImage".equals(item.getFieldName())) {
-                    filePath = imagesDirectory + File.separator + savedContact.getIdContact() + fileName.substring(fileName.lastIndexOf("."));
+                    filePath = imagesDirectory + File.separator + savedContact.getIdContact() + realFileName.substring(realFileName.lastIndexOf("."));
                 } else {
                     Long attachmentId = null;
-                    for (ContactAttachment attachment : savedContact.getAttachmentList()) {
-                        if (attachment.getFileName().equals(fileName))
+                    List<ContactAttachment> savedAttachments = savedContact.getAttachmentList();
+                    String fileIndex = fieldName.substring(4);                          // "file{fileIndex}"
+                    String fileName = formFields.get("fileName" + fileIndex);
+                    for (ContactAttachment attachment : savedAttachments) {
+                        if (attachment.getFileName().equals(fileName)) {
                             attachmentId = attachment.getIdAttachment();
+                            attachment.setRealFileName(realFileName);
+                        }
                     }
-                    filePath = attachmentsDirectory + File.separator + savedContact.getIdContact() + "_" +
-                            attachmentId + fileName.substring(fileName.lastIndexOf("."));
+                    filePath = attachmentsDirectory + File.separator + attachmentId + "_" + realFileName;
                 }
                 File uploadedFile = new File(filePath);
                 item.write(uploadedFile);
             }
+            ModificationContactService.updateContactAttachments(savedContact);
+            String path = request.getContextPath() + "/pages/contacts";
+            response.sendRedirect(path);
         } catch (Exception ex) {
-            log.error(ex.getMessage());
+            log.error(ex);
         }
     }
 
@@ -178,6 +190,7 @@ public class NewContactController implements Controller {
                 }
             }
             phone.setComment(formFields.get("phoneComment" + i));
+            phone.setIdPhone(contact.getIdContact());
             contactPhones.add(phone);
             i++;
         }
@@ -192,6 +205,7 @@ public class NewContactController implements Controller {
             attachment.setFileName(formFields.get("fileName" + i));
             attachment.setUploadDate(new Date(Long.parseLong(formFields.get("attachingDate" + i))));
             attachment.setComment(formFields.get("attachmentComment" + i));
+            attachment.setIdAttachment(contact.getIdContact());
             contactAttachments.add(attachment);
             i++;
         }

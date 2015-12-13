@@ -22,11 +22,12 @@
 
         <h1 class="page-header">Редактирование контакта</h1>
 
-        <form role="form">
+        <form id="contactForm" method="post" action="${pageContext.request.contextPath}/pages/editContact/${contact.idContact}" enctype="multipart/form-data" role="form">
 
             <div class="row">
                 <div class="col-md-3">
                     <img id="image"
+                         name="userImage"
                          class="img-responsive clickable"
                          src="${pageContext.request.contextPath}/resources/images/${contact.idContact}.jpg"
                          alt=""
@@ -47,10 +48,11 @@
                     </div>
                     <div class="form-group">
                         <label for="birthday">Дата рождения</label>
-                        <div id="birthday" class="calendarHolder">
-                            <input type="text" class="form-control" name="birthday" value="${contact.birthday}" placeholder="01.01.1980"/>
+                        <input type="text" class="form-control" id="birthday" name="birthday" value="${contact.birthday}" placeholder="01.01.1980"/>
+                        <%--<div class="calendarHolder">
+                            <input type="text" class="form-control" id="birthday" name="birthday" value="${contact.birthday}" placeholder="01.01.1980"/>
                             <div class="widgetCalendar"></div>
-                        </div>
+                        </div>--%>
                     </div>
                     <div class="form-group">
                         <input type="text" class="hidden" id="contactGender" value="${contact.gender}"/>
@@ -103,8 +105,14 @@
             <div class="row">
                 <div class="col-xs-6">
                     <div class="form-group">
+                        <input type="text" class="hidden" id="chosenCountry" value="${contact.address.country}"/>
                         <label for="country">Страна</label>
-                        <input type="text" class="form-control" id="country" name="country" value="${contact.address.country}" placeholder="Страна">
+                        <select id="country" name="country" class="form-control">
+                            <option value="NONE" selected>--- Выбор ---</option>
+                            <c:forEach items="${countries}" var="country">
+                                <option value="${country}">${country}</option>
+                            </c:forEach>
+                        </select>
                     </div>
                 </div>
                 <div class="col-xs-6">
@@ -214,7 +222,7 @@
             <div class="row">
                 <table class="table table-hover" datatype="attachment">
                     <tbody>
-                        <c:forEach items="${contact.phoneList}" var="phone" varStatus="loop">
+                        <c:forEach items="${contact.attachmentList}" var="attachment" varStatus="loop">
                             <tr>
                                 <td>
                                     <div class="checkbox cell-alignment">
@@ -245,10 +253,10 @@
 
             <div class="row">
                 <div class="col-md-3 col-md-offset-3 text-center">
-                    <button type="submit" name="" class="btn btn-success btn-lg button-size">Сохранить</button>
+                    <button type="submit" id="saveButton" data-url="${pageContext.request.contextPath}/pages/editContact/${contact.idContact}" class="btn btn-success btn-lg button-size">Сохранить</button>
                 </div>
                 <div class="col-md-1 text-center">
-                    <button type="submit" name="" class="btn btn-info btn-lg button-size">Отмена</button>
+                    <button type="submit" id="cancelButton" data-url="${pageContext.request.contextPath}/pages/contacts" class="btn btn-info btn-lg button-size">Отмена</button>
                 </div>
             </div>
 
@@ -257,7 +265,7 @@
                 <div id="image-popup-form">
                     <div id="image-popup-message"></div>
                     <input type="text" id="popupImageText" readonly/>
-                    <input type='file' accept="image/*" id="imageInput" name="image"/>
+                    <input type='file' accept="image/*" id="imageInput"/>
                     <input type="button" value="Найти" id="findImageButton"/>
                     <img id="popup-image"
                          class="img-responsive img-centralize"
@@ -275,7 +283,7 @@
                     <h3 id="phone-popup-message"></h3>
                     <div class="form-group">
                         <label for="countryCode">Код страны</label>
-                        <input type="text" class="form-control" id="countryCode" placeholder="+1">
+                        <input type="text" class="form-control" id="countryCode" placeholder="+375">
                     </div>
                     <div class="form-group">
                         <label for="operatorCode">Код оператора</label>
@@ -366,13 +374,14 @@
             </div>
             <div name="primaryContactIds" class="hidden">
                 <c:forEach items="${contact.phoneList}" var="phone" varStatus="loop">
-                    <input type="text" name="id${loop.index}" value="${phone.idPhone}"/>
+                    <input type="text" name="idPhone${loop.index}" value="${phone.idPhone}"/>
                 </c:forEach>
                 <input type="text" id="phonesInitialCount" name="phonesInitialCount" value="${fn:length(contact.phoneList)}"/>
                 <c:forEach items="${contact.attachmentList}" var="attachment" varStatus="loop">
-                    <input type="text" name="id${loop.index}" value="${attachment.idAttachment}"/>
+                    <input type="text" name="idAttachment${loop.index}" value="${attachment.idAttachment}"/>
                 </c:forEach>
                 <input type="text" id="attachmentsInitialCount" name="attachmentsInitialCount" value="${fn:length(contact.attachmentList)}"/>
+                <input type="text" name="idContact" value="${contact.idContact}">
             </div>
 
         </form>

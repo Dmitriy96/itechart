@@ -11,12 +11,16 @@ import org.apache.logging.log4j.Logger;
 import javax.naming.NamingException;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public final class ContactFindMysqlDao implements ContactFindDao {
     private final static ContactFindMysqlDao instance = new ContactFindMysqlDao();
     private static Logger log = LogManager.getLogger(ContactFindMysqlDao.class.getName());
     private final int MAX_CONTACTS_NUMBER = 10;
+
+    private ContactFindMysqlDao() {}
 
     public static ContactFindMysqlDao getInstance(){
         return instance;
@@ -33,7 +37,7 @@ public final class ContactFindMysqlDao implements ContactFindDao {
             connection = PersistenceManager.createConnection();
             statement = connection.prepareStatement("select idContact, name, surname, birthday, " +
                     " company, city, street, houseNumber, apartmentNumber from contact where " +
-                    "idContact > ? AND enabled = ? LIMIT ?");
+                    "idContact >= ? AND available = ? LIMIT ?");
             statement.setInt(1, offset);
             statement.setBoolean(2, true);
             statement.setInt(3, MAX_CONTACTS_NUMBER);
@@ -76,24 +80,24 @@ public final class ContactFindMysqlDao implements ContactFindDao {
                     "contact.surname, contact.patronymic, contact.birthday, contact.gender, " +
                     "contact.citizenship, contact.website, contact.email, contact.company, contact.maritalStatus, " +
                     "country.fullName, contact.city, contact.street, contact.houseNumber, contact.apartmentNumber, contact.zipCode, " +
-                    "phone.idPhone, phone.countryCode, phone.operatorCode, phone.phoneNumber, phone.phoneType, phone.comment" +
-                    "attachment.idAttachment, attachment.fileName, attachment.uploadDate, attachment.comment " +
+                    "phone.idPhone, phone.countryCode, phone.operatorCode, phone.phoneNumber, phone.phoneType, phone.comment, " +
+                    "attachment.idAttachment, attachment.fileName, attachment.uploadDate, attachment.comment, attachment.realFileName " +
                     "FROM contact " +
                     "JOIN country " +
                     "ON contact.Country_idCountryCode = country.idCountryCode " +
-                    "JOIN phone\n" +
+                    "JOIN phone " +
                     "on phone.Contact_idContact = contact.idContact " +
                     "JOIN attachment " +
                     "on attachment.Contact_idContact = contact.idContact " +
-                    "WHERE contact.idContact = ? AND contact.enabled = ? and phone.enabled = ? and attachment.enabled = ?");
+                    "WHERE contact.idContact = ? AND contact.available = ? and phone.available = ? and attachment.available = ?");
             statement.setInt(1, contactId);
             statement.setBoolean(2, true);
             statement.setBoolean(3, true);
             statement.setBoolean(4, true);
             resultSet = statement.executeQuery();
             contact = new Contact();
-            List<ContactPhone> phones = new ArrayList<>();
-            List<ContactAttachment> attachments = new ArrayList<>();
+            Set<ContactPhone> phones = new HashSet<>();
+            Set<ContactAttachment> attachments = new HashSet<>();
             if (resultSet.next()) {
                 contact.setIdContact(resultSet.getLong("contact.idContact"));
                 contact.setName(resultSet.getString("contact.name"));
@@ -125,11 +129,19 @@ public final class ContactFindMysqlDao implements ContactFindDao {
                 ContactAttachment attachment = getContactAttachment(resultSet);
                 attachments.add(attachment);
             }
-            contact.setPhoneList(phones);
-            contact.setAttachmentList(attachments);
+            log.debug("phones: ");
+            for (ContactPhone phone : phones) {
+                log.debug(phone.getIdPhone() + " " + phone.getComment());
+            }
+            log.debug("attachments: ");
+            for (ContactAttachment attachment : attachments) {
+                log.debug(attachment.getIdAttachment() + " " + attachment.getFileName());
+            }
+            contact.setPhoneList(new ArrayList<ContactPhone>(phones));
+            contact.setAttachmentList(new ArrayList<ContactAttachment>(attachments));
         } catch (NamingException | SQLException ex) {
             log.error(ex);
-            throw new DaoException("Can't get contacts.", ex);
+            throw new DaoException("Can't get contact.", ex);
         } finally {
             closeStatement(statement);
             PersistenceManager.closeConnection(connection);
@@ -153,6 +165,7 @@ public final class ContactFindMysqlDao implements ContactFindDao {
         attachment.setIdAttachment(resultSet.getLong("attachment.idAttachment"));
         attachment.setFileName(resultSet.getString("attachment.fileName"));
         attachment.setUploadDate(resultSet.getDate("attachment.uploadDate"));
+        attachment.setRealFileName(resultSet.getString("attachment.realFileName"));
         attachment.setComment(resultSet.getString("attachment.comment"));
         return attachment;
     }

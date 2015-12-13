@@ -25,6 +25,8 @@ public class SendEmailService {
         log.debug(username, password);
     }
 
+    private SendEmailService() {}
+
     public static boolean sendEmail(EmailAttributes emailAttributes) throws ServiceException {
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");

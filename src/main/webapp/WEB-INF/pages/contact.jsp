@@ -19,7 +19,7 @@
 
         <div class="row page-header">
             <div class="col-md-9">
-                <h1><c:out value="${contact.surname}"> <c:out value="${contact.name}"> <c:out value="${contact.patronymic}"></h1>
+                <h1><c:out value="${contact.surname}"/> <c:out value="${contact.name}"/> <c:out value="${contact.patronymic}"/></h1>
             </div>
             <div class="col-md-3 control-buttons-alignment">
                 <button type="button" class="btn btn-primary" title="Назад">
@@ -37,7 +37,7 @@
                 class="img-responsive clickable"
                 src='${pageContext.request.contextPath}/resources/images/${contact.idContact}.jpg'
                 alt=""
-                onerror='${pageContext.request.contextPath}/resources/images/default_avatar.png'>
+                onerror='../../resources/images/default_avatar.png'>
             </div>
             <div class="col-md-4">
                 <ul class="group-text-block">
@@ -94,26 +94,28 @@
 
         <div class="row">
             <table class="table table-hover">
-                <c:forEach items="${contact.phoneList}" var="phone">
+                <thead>
                     <tr>
-                        <td>
-                            <div class="checkbox cell-alignment">
-                                <label>
-                                    <input type="checkbox" value="${phone.idPhone}">
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="cell-text-alignment"><a href="">+<c:out value="${phone.countryCode}"/><c:out value="${phone.operatorCode}"/><c:out value="${phone.phoneNumber}"/></a></div>
-                        </td>
-                        <td>
-                            <div class="cell-text-alignment"><c:out value="${phone.phoneType}"/></div>
-                        </td>
-                        <td>
-                            <div class="cell-text-alignment"><c:out value="${phone.comment}"/></div>
-                        </td>
+                        <th>Номер телефона</th>
+                        <th>Тип телефона</th>
+                        <th>Комментарий</th>
                     </tr>
-                </c:forEach>
+                </thead>
+                <tbody>
+                    <c:forEach items="${contact.phoneList}" var="phone">
+                        <tr>
+                            <td>
+                                <div class="cell-text-alignment"><a href="">+<c:out value="${phone.countryCode}"/><c:out value="${phone.operatorCode}"/><c:out value="${phone.phoneNumber}"/></a></div>
+                            </td>
+                            <td>
+                                <div class="cell-text-alignment"><c:out value="${phone.phoneType}"/></div>
+                            </td>
+                            <td>
+                                <div class="cell-text-alignment"><c:out value="${phone.comment}"/></div>
+                            </td>
+                        </tr>
+                    </c:forEach>
+                </tbody>
             </table>
         </div>
 
@@ -124,26 +126,28 @@
 
         <div class="row">
             <table class="table table-hover">
-                <c:forEach items="${contact.attachmentList}" var="attachment">
+                <thead>
                     <tr>
-                        <td>
-                            <div class="checkbox cell-alignment">
-                                <label>
-                                    <input type="checkbox" value="${attachment.idAttachment}">
-                                </label>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="cell-text-alignment"><a href=""><c:out value="${attachment.fileName}"/></a></div>
-                        </td>
-                        <td>
-                            <div class="cell-text-alignment"><c:out value="${attachment.uploadDate}"/></div>
-                        </td>
-                        <td>
-                            <div class="cell-text-alignment"><c:out value="${attachment.comment}"/></div>
-                        </td>
+                        <th>Название файла</th>
+                        <th>Дата добавления</th>
+                        <th>Комментарий</th>
                     </tr>
-                </c:forEach>
+                </thead>
+                <tbody>
+                    <c:forEach items="${contact.attachmentList}" var="attachment">
+                        <tr>
+                            <td>
+                                <div class="cell-text-alignment"><a href="${pageContext.request.contextPath}/resources/files/${attachment.idAttachment}_${attachment.realFileName}"><c:out value="${attachment.fileName}"/></a></div>
+                            </td>
+                            <td>
+                                <div class="cell-text-alignment"><c:out value="${attachment.uploadDate}"/></div>
+                            </td>
+                            <td>
+                                <div class="cell-text-alignment"><c:out value="${attachment.comment}"/></div>
+                            </td>
+                        </tr>
+                    </c:forEach>
+                </tbody>
             </table>
         </div>
 
@@ -151,13 +155,13 @@
 
         <div class="row">
             <div class="col-md-3 col-md-offset-3 text-center">
-                <button type="button" class="btn btn-warning btn-lg button-size" title="Редактировать контакт">
-                    <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Редактировать
+                <button type="button" id="editContactButton" class="btn btn-warning btn-lg button-size" data-url="${pageContext.request.contextPath}/pages/editContact/${contact.idContact}" title="Редактировать контакт">
+                    Редактировать
                 </button>
             </div>
             <div class="col-md-1 text-center">
-                <button type="button" class="btn btn-primary btn-lg button-size" title="Назад">
-                    <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span> Назад
+                <button type="button" id="contactsButton" class="btn btn-primary btn-lg button-size" data-url="${pageContext.request.contextPath}/pages/contacts" title="Назад">
+                    Назад
                 </button>
             </div>
         </div>

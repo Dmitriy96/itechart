@@ -12,8 +12,9 @@ import java.util.List;
 
 
 public class FindContactService {
-    private final static FindContactService instance = new FindContactService();
     private static Logger log = LogManager.getLogger(FindContactService.class.getName());
+
+    private FindContactService() {}
 
     public static List<Contact> getContacts(int offset) throws ServiceException {
         log.debug("getContacts: " + offset);

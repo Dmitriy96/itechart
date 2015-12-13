@@ -1,8 +1,6 @@
 package by.itechart.javalab.entity;
 
-/**
- * Created by Dmitriy on 14.11.2015.
- */
+
 public enum PhoneType {
     LANDLINE("Домашний"), MOBILE("Мобильный");
 

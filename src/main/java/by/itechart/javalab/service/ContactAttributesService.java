@@ -11,8 +11,9 @@ import java.util.List;
 
 
 public class ContactAttributesService {
-    private final static ContactAttributesService instance = new ContactAttributesService();
     private static Logger log = LogManager.getLogger(ContactAttributesService.class.getName());
+
+    private ContactAttributesService() {}
 
     public static List<String> getAllCountries() throws ServiceException {
         List<String> countries = new ArrayList<>();

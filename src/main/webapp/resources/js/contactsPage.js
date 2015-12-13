@@ -36,16 +36,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     var showContactButtons = document.getElementsByName("showContact");
     var editContactButtons = document.getElementsByName("editContact");
+
     for (var i = 0; i < showContactButtons.length; i++) {
         showContactButtons[i].onclick = function() {
-            var form = document.getElementById("contactsForm");
-            form.setAttribute("action", this.getAttribute("data-url"));
-            form.submit();
+            location.href = this.getAttribute("data-url");
         };
         editContactButtons[i].onclick = function() {
-            var form = document.getElementById("contactsForm");
-            form.setAttribute("action", this.getAttribute("data-url"));
-            form.submit();
+            location.href = this.getAttribute("data-url");
         };
     }
 });
