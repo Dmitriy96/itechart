@@ -5,20 +5,20 @@ import by.itechart.javalab.dao.ContactFindDao;
 import by.itechart.javalab.dao.DaoException;
 import by.itechart.javalab.entity.*;
 import by.itechart.javalab.persistence.PersistenceManager;
+import by.itechart.javalab.service.ContactSearchAttributes;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.naming.NamingException;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.sql.Date;
+import java.util.*;
 
 public final class ContactFindMysqlDao implements ContactFindDao {
     private final static ContactFindMysqlDao instance = new ContactFindMysqlDao();
     private static Logger log = LogManager.getLogger(ContactFindMysqlDao.class.getName());
-    private final int MAX_CONTACTS_NUMBER = 10;
+    private final int MAX_CONTACTS_NUMBER = 11;
 
     private ContactFindMysqlDao() {}
 
@@ -27,7 +27,7 @@ public final class ContactFindMysqlDao implements ContactFindDao {
     }
 
     @Override
-    public List<Contact> getContacts(Integer offset) throws DaoException {
+    public List<Contact> getContacts(Integer offset, boolean isLowerIds) throws DaoException {
         log.debug("getContacts: " + offset);
         Connection connection = null;
         PreparedStatement statement = null;
@@ -35,9 +35,13 @@ public final class ContactFindMysqlDao implements ContactFindDao {
         List<Contact> contacts = new ArrayList<>();
         try {
             connection = PersistenceManager.createConnection();
-            statement = connection.prepareStatement("select idContact, name, surname, birthday, " +
-                    " company, city, street, houseNumber, apartmentNumber from contact where " +
-                    "idContact >= ? AND available = ? LIMIT ?");
+            StringBuilder preparedStatementSQL = new StringBuilder("select idContact, name, surname, birthday, " +
+                    " company, city, street, houseNumber, apartmentNumber from contact where ");
+            if (isLowerIds)
+                preparedStatementSQL.append("idContact < ? AND available = ? ORDER BY idContact DESC LIMIT ?");
+            else
+                preparedStatementSQL.append("idContact > ? AND available = ? ORDER BY idContact ASC LIMIT ?");
+            statement = connection.prepareStatement(preparedStatementSQL.toString());
             statement.setInt(1, offset);
             statement.setBoolean(2, true);
             statement.setInt(3, MAX_CONTACTS_NUMBER);
@@ -64,6 +68,142 @@ public final class ContactFindMysqlDao implements ContactFindDao {
             closeStatement(statement);
             PersistenceManager.closeConnection(connection);
         }
+        if (isLowerIds)
+            Collections.reverse(contacts);
+        return contacts;
+    }
+
+    @Override
+    public List<Contact> getContacts(ContactSearchAttributes searchAttributes, Integer offset, boolean isLowerIds) throws DaoException {
+        log.debug("getContacts: " + offset);
+        log.debug("searchAttributes: {}", searchAttributes.getName());
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        List<Contact> contacts = new ArrayList<>();
+        try {
+            connection = PersistenceManager.createConnection();
+            StringBuilder preparedStatementSQL = new StringBuilder("select idContact, name, surname, birthday, " +
+                    " company, city, street, houseNumber, apartmentNumber from contact where " +
+                    "available = ? ");
+            Map<Integer, Object> preparedStatementParameters = new HashMap<>();
+            int parameterPosition = 2;
+            if (StringUtils.isNotEmpty(searchAttributes.getName())) {
+                preparedStatementSQL.append("AND name = ? ");
+                preparedStatementParameters.put(parameterPosition, searchAttributes.getName());
+                parameterPosition++;
+            }
+            if (StringUtils.isNotEmpty(searchAttributes.getSurname())) {
+                preparedStatementSQL.append("AND surname = ? ");
+                preparedStatementParameters.put(parameterPosition, searchAttributes.getSurname());
+                parameterPosition++;
+            }
+            if (StringUtils.isNotEmpty(searchAttributes.getPatronymic())) {
+                preparedStatementSQL.append("AND patronymic = ? ");
+                preparedStatementParameters.put(parameterPosition, searchAttributes.getPatronymic());
+                parameterPosition++;
+            }
+            if (StringUtils.isNotEmpty(searchAttributes.getCitizenship())) {
+                preparedStatementSQL.append("AND citizenship = ? ");
+                preparedStatementParameters.put(parameterPosition, searchAttributes.getCitizenship());
+                parameterPosition++;
+            }
+            if (searchAttributes.getGender() != null) {
+                preparedStatementSQL.append("AND gender = ? ");
+                preparedStatementParameters.put(parameterPosition, searchAttributes.getGender().name());
+                parameterPosition++;
+            }
+            if (searchAttributes.getMaritalStatus() != null) {
+                preparedStatementSQL.append("AND maritalStatus = ? ");
+                preparedStatementParameters.put(parameterPosition, searchAttributes.getMaritalStatus().name());
+                parameterPosition++;
+            }
+            if (searchAttributes.getBirthdayDateFrom() != null) {
+                preparedStatementSQL.append("AND birthday >= ? ");
+                preparedStatementParameters.put(parameterPosition, new Date(searchAttributes.getBirthdayDateFrom().getTime()));
+                parameterPosition++;
+            }
+            if (searchAttributes.getBirthdayDateTo() != null) {
+                preparedStatementSQL.append("AND birthday <= ? ");
+                preparedStatementParameters.put(parameterPosition, new Date(searchAttributes.getBirthdayDateTo().getTime()));
+                parameterPosition++;
+            }
+            if (StringUtils.isNotEmpty(searchAttributes.getAddress().getCountry())) {
+                preparedStatementSQL.append("AND Country_idCountryCode = (SELECT idCountryCode from country where fullName = ?) ");
+                preparedStatementParameters.put(parameterPosition, searchAttributes.getAddress().getCountry());
+                parameterPosition++;
+            }
+            if (StringUtils.isNotEmpty(searchAttributes.getAddress().getCity())) {
+                preparedStatementSQL.append("AND city = ? ");
+                preparedStatementParameters.put(parameterPosition, searchAttributes.getAddress().getCity());
+                parameterPosition++;
+            }
+            if (StringUtils.isNotEmpty(searchAttributes.getAddress().getStreet())) {
+                preparedStatementSQL.append("AND street = ? ");
+                preparedStatementParameters.put(parameterPosition, searchAttributes.getAddress().getStreet());
+                parameterPosition++;
+            }
+            if (StringUtils.isNotEmpty(searchAttributes.getAddress().getHouseNumber())) {
+                preparedStatementSQL.append("AND houseNumber = ? ");
+                preparedStatementParameters.put(parameterPosition, searchAttributes.getAddress().getHouseNumber());
+                parameterPosition++;
+            }
+            if (StringUtils.isNotEmpty(searchAttributes.getAddress().getApartmentNumber())) {
+                preparedStatementSQL.append("AND apartmentNumber = ? ");
+                preparedStatementParameters.put(parameterPosition, searchAttributes.getAddress().getApartmentNumber());
+                parameterPosition++;
+            }
+            if (searchAttributes.getAddress().getZipCode() != null) {
+                preparedStatementSQL.append("AND zipCode = ? ");
+                preparedStatementParameters.put(parameterPosition, searchAttributes.getAddress().getZipCode());
+                parameterPosition++;
+            }
+            if (isLowerIds)
+                preparedStatementSQL.append("AND idContact < ? ORDER BY idContact DESC LIMIT ?");
+            else
+                preparedStatementSQL.append("AND idContact > ? ORDER BY idContact ASC LIMIT ?");
+            statement = connection.prepareStatement(preparedStatementSQL.toString());
+            statement.setBoolean(1, true);
+            statement.setInt(parameterPosition, offset);
+            statement.setInt(++parameterPosition, MAX_CONTACTS_NUMBER);
+            for (Integer position : preparedStatementParameters.keySet()) {
+                if (preparedStatementParameters.get(position) instanceof String) {
+                    statement.setString(position, (String) preparedStatementParameters.get(position));
+                    continue;
+                }
+                if (preparedStatementParameters.get(position) instanceof Integer) {
+                    statement.setInt(position, (Integer) preparedStatementParameters.get(position));
+                    continue;
+                }
+                if (preparedStatementParameters.get(position) instanceof Date) {
+                    statement.setDate(position, (Date) preparedStatementParameters.get(position));
+                }
+            }
+            resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                Contact contact = new Contact();
+                contact.setIdContact(resultSet.getLong("idContact"));
+                contact.setName(resultSet.getString("name"));
+                contact.setSurname(resultSet.getString("surname"));
+                contact.setBirthday(resultSet.getDate("birthday"));
+                contact.setCompany(resultSet.getString("company"));
+                Address address = new Address();
+                address.setCity(resultSet.getString("city"));
+                address.setStreet(resultSet.getString("street"));
+                address.setHouseNumber(resultSet.getString("houseNumber"));
+                address.setApartmentNumber(resultSet.getString("apartmentNumber"));
+                contact.setAddress(address);
+                contacts.add(contact);
+            }
+        } catch (NamingException | SQLException ex) {
+            log.error(ex);
+            throw new DaoException("Can't get contacts.", ex);
+        } finally {
+            closeStatement(statement);
+            PersistenceManager.closeConnection(connection);
+        }
+        if (isLowerIds)
+            Collections.reverse(contacts);
         return contacts;
     }
 

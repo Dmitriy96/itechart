@@ -1,5 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -29,6 +30,9 @@
                 <div class="col-md-2 affix">
                     <ul class="group-list">
                         <li class="list-item">
+                            <a id="allContactList" href="${pageContext.request.contextPath}/pages/contacts"><span class="glyphicon glyphicon-list-alt"></span> Список контактов</a>
+                        </li>
+                        <li class="list-item">
                             <a href="${pageContext.request.contextPath}/pages/newContact"><span class="glyphicon glyphicon-plus"></span> Создать контакт</a>
                         </li>
                         <li class="list-item">
@@ -57,7 +61,7 @@
                             </tr>
                             </thead>
                             <tbody>
-                                <c:forEach items="${contacts}" var="contact">
+                                <c:forEach items="${contacts}" var="contact" varStatus="loop">
                                     <tr>
                                         <td>
                                             <div class="checkbox">
@@ -67,7 +71,7 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <div class="cell-text-alignment"><a href="">${contact.name} ${contact.surname}</a></div>
+                                            <div class="cell-text-alignment"><a href="${pageContext.request.contextPath}/pages/editContact/${contact.idContact}">${contact.name} ${contact.surname}</a></div>
                                         </td>
                                         <td>
                                             <div class="cell-text-alignment">${contact.birthday}</div>
@@ -107,16 +111,51 @@
             <div class="row text-center">
                 <div class="col-lg-12">
                     <ul class="pager">
-                        <li><a href="#" class="disabled">Предыдущая</a></li>
-                        <li><a href="#">Следующая</a></li>
+                        <li><a id="previousPage" href="${pageContext.request.contextPath}/pages/contacts" class="disabled">Предыдущая</a></li>
+                        <li><a id="nextPage" href="${pageContext.request.contextPath}/pages/contacts" class="disabled">Следующая</a></li>
                     </ul>
                 </div>
             </div>
-        </form>
-        <div class="hidden">
-            <c:set var="hasNext" value="${hasNext}"/>
 
+            <div id="contactSearchAttributes" class="hidden">
+                <input type="text" id="isSearch" name="isSearch" value="${isSearch}"/>
+                <input type="text" name="name" value="${searchAttributes.name}"/>
+                <input type="text" name="surname" value="${searchAttributes.surname}"/>
+                <input type="text" name="patronymic" value="${searchAttributes.patronymic}"/>
+                <input type="text" name="citizenship" value="${searchAttributes.citizenship}"/>
+                <input type="text" name="birthdayDateFrom" value="${searchAttributes.birthdayDateFrom}"/>
+                <input type="text" name="birthdayDateTo" value="${searchAttributes.birthdayDateTo}"/>
+                <input type="text" name="gender" value="${searchAttributes.gender}"/>
+                <input type="text" name="maritalStatus" value="${searchAttributes.maritalStatus}"/>
+                <input type="text" name="country" value="${searchAttributes.address.country}"/>
+                <input type="text" name="city" value="${searchAttributes.address.city}"/>
+                <input type="text" name="street" value="${searchAttributes.address.street}"/>
+                <input type="text" name="houseNumber" value="${searchAttributes.address.houseNumber}"/>
+                <input type="text" name="apartmentNumber" value="${searchAttributes.address.apartmentNumber}"/>
+                <input type="text" name="zipCode" value="${searchAttributes.address.zipCode}"/>
+            </div>
+
+            <div name="paginationValues" class="hidden">
+                <input type="text" id="startContactIdForPreviousPage" name="startContactIdForPreviousPage" value="${contacts[0].idContact}"/>
+                <input type="text" id="isLowerIds" name="isLowerIds" value=""/>
+                <c:forEach items="${contacts}" var="contact" varStatus="loop">
+                    <c:if test="${loop.last}">
+                        <input type="text" id="startContactIdForNextPage" name="startContactIdForNextPage" value="${contact.idContact}"/>
+                    </c:if>
+                </c:forEach>
+                <input type="text" id="startContactIdForPage" name="startContactIdForPage" value=""/>
+            </div>
+
+            <input type="text" id="deletingContactsId" name="deletingContactsId" class="hidden" value=""/>
+            <input type="text" id="emailContactsId" name="emailContactsId" class="hidden" value=""/>
+
+        </form>
+
+        <div class="hidden">
+            <input type="text" id="hasNext" value="${hasNext}"/>
+            <input type="text" id="hasPrevious" value="${hasPrevious}"/>
         </div>
+
     </div>
 
     <script src="${pageContext.request.contextPath}/resources/js/contactsPage.js"></script>

@@ -16,13 +16,27 @@ public class FindContactService {
 
     private FindContactService() {}
 
-    public static List<Contact> getContacts(int offset) throws ServiceException {
+    public static List<Contact> getContacts(int offset, boolean isLowerIds) throws ServiceException {
         log.debug("getContacts: " + offset);
         List<Contact> contacts = new ArrayList<>();
         try {
             DaoFactory daoFactory = DaoFactory.getDaoFactory();
             ContactFindDao findDao = daoFactory.getContactFindDao();
-            contacts = findDao.getContacts(offset);
+            contacts = findDao.getContacts(offset, isLowerIds);
+        } catch (DaoException ex) {
+            log.error(ex);
+            throw new ServiceException(ex);
+        }
+        return contacts;
+    }
+
+    public static List<Contact> getSearchContacts(ContactSearchAttributes searchAttributes, Integer offset, boolean isLowerIds) throws ServiceException {
+        log.debug("getSearchContacts: ");
+        List<Contact> contacts = new ArrayList<>();
+        try {
+            DaoFactory daoFactory = DaoFactory.getDaoFactory();
+            ContactFindDao findDao = daoFactory.getContactFindDao();
+            contacts = findDao.getContacts(searchAttributes, offset, isLowerIds);
         } catch (DaoException ex) {
             log.error(ex);
             throw new ServiceException(ex);
@@ -31,7 +45,7 @@ public class FindContactService {
     }
 
     public static Contact getContact(Integer contactId) throws ServiceException {
-        log.debug("getContacts: " + contactId);
+        log.debug("getContact: " + contactId);
         Contact contact = null;
         try {
             DaoFactory daoFactory = DaoFactory.getDaoFactory();

@@ -49,12 +49,13 @@ public class EmailController implements Controller {
     }
 
     private void showPage(HttpServletRequest request, HttpServletResponse response) {
-        String checkedContacts[] = request.getParameterValues("contact");
+        String emailContactsId = request.getParameter("emailContactsId");
         try {
-            if (checkedContacts != null) {
-                Integer contactId[] = new Integer[checkedContacts.length];
-                for (int i = 0; i < checkedContacts.length; i++) {
-                    contactId[i] = Integer.parseInt(checkedContacts[i]);
+            if (emailContactsId != null) {
+                String contactIds[] = emailContactsId.split(",");
+                Integer contactId[] = new Integer[contactIds.length];
+                for (int i = 0; i < contactIds.length; i++) {
+                    contactId[i] = Integer.parseInt(contactIds[i]);
                 }
                 List<String> emailsList = FindContactService.getEmails(contactId);
                 StringBuilder emails = new StringBuilder();
@@ -68,7 +69,7 @@ public class EmailController implements Controller {
                 request.setAttribute("emails", contactEmails);
             }
             request.getServletContext().getRequestDispatcher("/WEB-INF/pages/email.jsp").forward(request, response);
-        } catch (ServiceException | ServletException | IOException e) {
+        } catch (ServiceException | ServletException | IOException | NumberFormatException e) {
             log.error(e);
         }
     }

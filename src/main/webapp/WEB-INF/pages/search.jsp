@@ -19,21 +19,25 @@
     
         <h1 class="page-header">Поиск контакта</h1>
 
-        <form role="form">
+        <form method="post" action="${pageContext.request.contextPath}/pages/search" role="form">
 
             <div class="row">
                 <div class="col-md-8">
                     <div class="form-group">
                         <label for="name">Имя</label>
-                        <input type="text" class="form-control" id="name" placeholder="Имя">
+                        <input type="text" class="form-control" id="name" name="name" placeholder="Имя">
                     </div>
                     <div class="form-group">
                         <label for="surname">Фамилия</label>
-                        <input type="text" class="form-control" id="surname" placeholder="Фамилия">
+                        <input type="text" class="form-control" id="surname" name="surname" placeholder="Фамилия">
                     </div>
                     <div class="form-group">
                         <label for="patronymic">Отчество</label>
-                        <input type="text" class="form-control" id="patronymic" placeholder="Отчество">
+                        <input type="text" class="form-control" id="patronymic" name="patronymic" placeholder="Отчество">
+                    </div>
+                    <div class="form-group">
+                        <label for="citizenship">Гражданство</label>
+                        <input type="text" class="form-control" id="citizenship" name="citizenship" placeholder="Гражданство">
                     </div>
                 </div>
             </div>
@@ -42,11 +46,11 @@
                 <div class="col-md-3">
                     <div class="form-group">
                         <label for="lowerBirthday">Дата рождения (от)</label>
-                        <input type="date" class="form-control" id="lowerBirthday" placeholder="01.01.1980">
+                        <input type="date" class="form-control" id="lowerBirthday" name="lowerBirthday" placeholder="01.01.1980">
                     </div>
                     <div class="form-group">
                         <label for="gender">Пол</label><br/>
-                        <select id="gender">
+                        <select id="gender" name="gender">
                             <option value="NONE">--- Выбор ---</option>
                             <option value="Мужской">Мужской</option>
                             <option value="Женский">Женский</option>
@@ -56,11 +60,11 @@
                 <div class="col-md-3">
                     <div class="form-group">
                         <label for="upperBirthday">Дата рождения (до)</label>
-                        <input type="date" class="form-control" id="upperBirthday" placeholder="01.01.1980">
+                        <input type="date" class="form-control" id="upperBirthday" name="upperBirthday" placeholder="01.01.1980">
                     </div>
                     <div class="form-group">
                         <label for="marital">Семейное положение</label>
-                        <select id="marital">
+                        <select id="marital" name="marital">
                             <option value="NONE">--- Выбор ---</option>
                             <option value="Женат/Замужем">Женат/Замужем</option>
                             <option value="Разведён/Разведена">Разведён/Разведена</option>
@@ -76,31 +80,36 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         <label for="country">Страна</label>
-                        <input type="text" class="form-control" id="country" placeholder="Страна">
+                        <select id="country" name="country" class="form-control">
+                            <option value="NONE" selected>--- Выбор ---</option>
+                            <c:forEach items="${countries}" var="country">
+                                <option value="${country}">${country}</option>
+                            </c:forEach>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="street">Улица</label>
-                        <input type="text" class="form-control" id="street" placeholder="Улица">
+                        <input type="text" class="form-control" id="street" name="street" placeholder="Улица">
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
                         <label for="city">Город</label>
-                        <input type="text" class="form-control" id="city" placeholder="Город">
+                        <input type="text" class="form-control" id="city" name="city" placeholder="Город">
                     </div>
                     <div class="form-group">
                         <label for="houseNumber">Номер дома</label>
-                        <input type="text" class="form-control" id="houseNumber" placeholder="Номер дома">
+                        <input type="text" class="form-control" id="houseNumber" name="houseNumber" placeholder="Номер дома">
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
                         <label for="zipCode">Индекс</label>
-                        <input type="text" class="form-control" id="zipCode" placeholder="Индекс">
+                        <input type="text" class="form-control" id="zipCode" name="zipCode" placeholder="Индекс">
                     </div>
                     <div class="form-group">
                         <label for="apartmentNumber">Квартира</label>
-                        <input type="text" class="form-control" id="apartmentNumber" placeholder="Квартира">
+                        <input type="text" class="form-control" id="apartmentNumber" name="apartmentNumber" placeholder="Квартира">
                     </div>
                 </div>
             </div>
@@ -112,7 +121,7 @@
                     <button type="submit" class="btn btn-success btn-lg button-size">Поиск</button>
                 </div>
                 <div class="col-md-1 text-center">
-                    <button type="submit" class="btn btn-info btn-lg button-size">Назад</button>
+                    <button type="submit" id="cancelButton" class="btn btn-info btn-lg button-size">Назад</button>
                 </div>
             </div>
 
