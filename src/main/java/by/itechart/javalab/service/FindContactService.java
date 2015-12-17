@@ -71,4 +71,18 @@ public class FindContactService {
         }
         return emails;
     }
+
+    public static List<Contact> getBirthdayContacts() throws ServiceException {
+        log.debug("getBirthdayContacts: ");
+        List<Contact> contacts = new ArrayList<>();
+        try {
+            DaoFactory daoFactory = DaoFactory.getDaoFactory();
+            ContactFindDao findDao = daoFactory.getContactFindDao();
+            contacts = findDao.getBirthdayContacts();
+        } catch (DaoException ex) {
+            log.error(ex);
+            throw new ServiceException(ex);
+        }
+        return contacts;
+    }
 }

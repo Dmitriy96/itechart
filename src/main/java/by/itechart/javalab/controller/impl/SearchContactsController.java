@@ -85,10 +85,10 @@ public class SearchContactsController implements Controller {
             String birthdayDateTo = request.getParameter("upperBirthday");
             if (StringUtils.isNotEmpty(birthdayDateTo)) {
                 Date parsedDate = format.parse(request.getParameter("upperBirthday"));
-                searchAttributes.setBirthdayDateFrom(new Date(parsedDate.getTime()));
+                searchAttributes.setBirthdayDateTo(new Date(parsedDate.getTime()));
             }
             else
-                searchAttributes.setBirthdayDateFrom(null);
+                searchAttributes.setBirthdayDateTo(null);
         } catch (ParseException e) {
             log.error(e);
             request.setAttribute("dateInvalidFormat", "Invalid date format.");
@@ -112,9 +112,7 @@ public class SearchContactsController implements Controller {
         address.setStreet(request.getParameter("street"));
         address.setHouseNumber(request.getParameter("houseNumber"));
         address.setApartmentNumber(request.getParameter("apartmentNumber"));
-        String zipCodeParameter = request.getParameter("zipCode");
-        Integer zipCode = StringUtils.isNotEmpty(zipCodeParameter) ? Integer.parseInt(zipCodeParameter) : null;
-        address.setZipCode(zipCode);
+        address.setZipCode(request.getParameter("zipCode"));
         searchAttributes.setAddress(address);
         return searchAttributes;
     }

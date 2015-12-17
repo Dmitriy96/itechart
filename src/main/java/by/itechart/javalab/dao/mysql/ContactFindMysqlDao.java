@@ -28,7 +28,7 @@ public final class ContactFindMysqlDao implements ContactFindDao {
 
     @Override
     public List<Contact> getContacts(Integer offset, boolean isLowerIds) throws DaoException {
-        log.debug("getContacts: " + offset);
+        log.debug("getContacts: {}", offset);
         Connection connection = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
@@ -75,8 +75,7 @@ public final class ContactFindMysqlDao implements ContactFindDao {
 
     @Override
     public List<Contact> getContacts(ContactSearchAttributes searchAttributes, Integer offset, boolean isLowerIds) throws DaoException {
-        log.debug("getContacts: " + offset);
-        log.debug("searchAttributes: {}", searchAttributes.getName());
+        log.debug("getContacts: {}, {}", offset, isLowerIds);
         Connection connection = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
@@ -209,7 +208,7 @@ public final class ContactFindMysqlDao implements ContactFindDao {
 
     @Override
     public Contact getContact(Integer contactId) throws DaoException {
-        log.debug("getContact: " + contactId);
+        log.debug("getContact: {}", contactId);
         Connection connection = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
@@ -244,19 +243,23 @@ public final class ContactFindMysqlDao implements ContactFindDao {
                 contact.setSurname(resultSet.getString("contact.surname"));
                 contact.setPatronymic(resultSet.getString("contact.patronymic"));
                 contact.setBirthday(resultSet.getDate("contact.birthday"));
-                contact.setGender(Gender.valueOf(resultSet.getString("contact.gender")));
+                String gender = resultSet.getString("contact.gender");
+                Gender genderValue = StringUtils.isNoneEmpty(gender) ? Gender.valueOf(gender) : null;
+                contact.setGender(genderValue);
                 contact.setCitizenship(resultSet.getString("contact.citizenship"));
                 contact.setWebsite(resultSet.getString("contact.website"));
                 contact.setEmail(resultSet.getString("contact.email"));
                 contact.setCompany(resultSet.getString("contact.company"));
-                contact.setMaritalStatus(MaritalStatus.valueOf(resultSet.getString("contact.maritalStatus")));
+                String status = resultSet.getString("contact.maritalStatus");
+                MaritalStatus maritalStatus = StringUtils.isNotEmpty(status) ? MaritalStatus.valueOf(status) : null;
+                contact.setMaritalStatus(maritalStatus);
                 Address address = new Address();
                 address.setCountry(resultSet.getString("country.fullName"));
                 address.setCity(resultSet.getString("contact.city"));
                 address.setStreet(resultSet.getString("contact.street"));
                 address.setHouseNumber(resultSet.getString("contact.houseNumber"));
                 address.setApartmentNumber(resultSet.getString("contact.apartmentNumber"));
-                address.setZipCode(resultSet.getInt("contact.zipCode"));
+                address.setZipCode(resultSet.getString("contact.zipCode"));
                 contact.setAddress(address);
                 ContactPhone phone = getContactPhone(resultSet);
                 phones.add(phone);
@@ -268,14 +271,6 @@ public final class ContactFindMysqlDao implements ContactFindDao {
                 phones.add(phone);
                 ContactAttachment attachment = getContactAttachment(resultSet);
                 attachments.add(attachment);
-            }
-            log.debug("phones: ");
-            for (ContactPhone phone : phones) {
-                log.debug(phone.getIdPhone() + " " + phone.getComment());
-            }
-            log.debug("attachments: ");
-            for (ContactAttachment attachment : attachments) {
-                log.debug(attachment.getIdAttachment() + " " + attachment.getFileName());
             }
             contact.setPhoneList(new ArrayList<ContactPhone>(phones));
             contact.setAttachmentList(new ArrayList<ContactAttachment>(attachments));
@@ -295,7 +290,9 @@ public final class ContactFindMysqlDao implements ContactFindDao {
         phone.setCountryCode(resultSet.getInt("phone.countryCode"));
         phone.setOperatorCode(resultSet.getInt("phone.operatorCode"));
         phone.setPhoneNumber(resultSet.getInt("phone.phoneNumber"));
-        phone.setPhoneType(PhoneType.valueOf(resultSet.getString("phone.phoneType")));
+        String phoneType = resultSet.getString("phone.phoneType");
+        PhoneType phoneTypeValue = StringUtils.isNotEmpty(phoneType) ? PhoneType.valueOf(phoneType) : null;
+        phone.setPhoneType(phoneTypeValue);
         phone.setComment(resultSet.getString("phone.comment"));
         return phone;
     }
@@ -312,6 +309,7 @@ public final class ContactFindMysqlDao implements ContactFindDao {
 
     @Override
     public List<String> getEmails(Integer[] contactId) throws DaoException {
+        log.debug("getEmails: ");
         Connection connection = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
@@ -334,6 +332,40 @@ public final class ContactFindMysqlDao implements ContactFindDao {
             PersistenceManager.closeConnection(connection);
         }
         return emails;
+    }
+
+    @Override
+    public List<Contact> getBirthdayContacts() throws DaoException {
+        log.debug("getContact: ");
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        List<Contact> contacts = new ArrayList<>();
+        try {
+            connection = PersistenceManager.createConnection();
+            statement = connection.prepareStatement("SELECT name, surname, " +
+                    "patronymic, birthday, email FROM contact WHERE available = ? AND " +
+                    "EXTRACT(MONTH FROM birthday) = EXTRACT(MONTH FROM CURDATE()) " +
+                    "AND EXTRACT(DAY FROM birthday) = EXTRACT(DAY FROM CURDATE())");
+            statement.setBoolean(1, true);
+            resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                Contact contact = new Contact();
+                contact.setName(resultSet.getString("name"));
+                contact.setSurname(resultSet.getString("surname"));
+                contact.setPatronymic(resultSet.getString("patronymic"));
+                contact.setBirthday(resultSet.getDate("birthday"));
+                contact.setEmail(resultSet.getString("email"));
+                contacts.add(contact);
+            }
+        } catch (NamingException | SQLException ex) {
+            log.error(ex);
+            throw new DaoException("Can't get contacts.", ex);
+        } finally {
+            closeStatement(statement);
+            PersistenceManager.closeConnection(connection);
+        }
+        return contacts;
     }
 
     private void closeStatement(Statement statement) {

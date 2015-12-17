@@ -36,6 +36,7 @@ public class ContactsController implements Controller {
             boolean isLowerIds = false;
             contacts = FindContactService.getContacts(0, isLowerIds);
             checkIfPaginationPossible(request, contacts, isLowerIds);
+            request.setAttribute("hasPrevious", false);
             request.setAttribute("contacts", contacts);
             request.getServletContext().getRequestDispatcher("/WEB-INF/pages/contacts.jsp").forward(request, response);
         } catch (ServiceException | ServletException | IOException | NumberFormatException e) {
@@ -164,7 +165,7 @@ public class ContactsController implements Controller {
         address.setStreet(request.getParameter("street"));
         address.setHouseNumber(request.getParameter("houseNumber"));
         address.setApartmentNumber(request.getParameter("apartmentNumber"));
-        address.setZipCode(Integer.parseInt(request.getParameter("zipCode")));
+        address.setZipCode(request.getParameter("zipCode"));
         searchAttributes.setAddress(address);
         return searchAttributes;
     }

@@ -16,7 +16,7 @@ public class ErrorController implements Controller {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) {
         try {
-            request.getServletContext().getRequestDispatcher("/WEB-INF/404.jsp").forward(request, response);
+            request.getServletContext().getRequestDispatcher("/WEB-INF/pages/error.jsp").forward(request, response);
         } catch (ServletException | IOException e) {
             log.error(e);
         }

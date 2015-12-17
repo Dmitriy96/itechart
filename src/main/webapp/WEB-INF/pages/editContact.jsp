@@ -36,23 +36,19 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         <label for="name">Имя</label>
-                        <input type="text" class="form-control" id="name" name="name" value="${contact.name}" placeholder="Имя">
+                        <input type="text" class="form-control" id="name" name="name" value="${contact.name}" placeholder="Имя" maxlength="150" required/>
                     </div>
                     <div class="form-group">
                         <label for="surname">Фамилия</label>
-                        <input type="text" class="form-control" id="surname" name="surname" value="${contact.surname}" placeholder="Фамилия">
+                        <input type="text" class="form-control" id="surname" name="surname" value="${contact.surname}" placeholder="Фамилия" maxlength="150" required/>
                     </div>
                     <div class="form-group">
                         <label for="patronymic">Отчество</label>
-                        <input type="text" class="form-control" id="patronymic" name="patronymic" value="${contact.patronymic}" placeholder="Отчество">
+                        <input type="text" class="form-control" id="patronymic" name="patronymic" value="${contact.patronymic}" placeholder="Отчество" maxlength="150"/>
                     </div>
                     <div class="form-group">
                         <label for="birthday">Дата рождения</label>
-                        <input type="text" class="form-control" id="birthday" name="birthday" value="${contact.birthday}" placeholder="01.01.1980"/>
-                        <%--<div class="calendarHolder">
-                            <input type="text" class="form-control" id="birthday" name="birthday" value="${contact.birthday}" placeholder="01.01.1980"/>
-                            <div class="widgetCalendar"></div>
-                        </div>--%>
+                        <input type="text" class="form-control" id="birthday" name="birthday" value="${contact.birthday}" placeholder="01.01.1980" pattern="\d{2}\.\d{2}\.\d{4}" required/>
                     </div>
                     <div class="form-group">
                         <input type="text" class="hidden" id="contactGender" value="${contact.gender}"/>
@@ -68,19 +64,19 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         <label for="citizenship">Гражданство</label>
-                        <input type="text" class="form-control" id="citizenship" name="citizenship" value="${contact.citizenship}" placeholder="Гражданство">
+                        <input type="text" class="form-control" id="citizenship" name="citizenship" value="${contact.citizenship}" placeholder="Гражданство" maxlength="150"/>
                     </div>
                     <div class="form-group">
                         <label for="website">Веб сайт</label>
-                        <input type="text" class="form-control" id="website" name="website" value="${contact.website}" placeholder="Веб сайт">
+                        <input type="text" class="form-control" id="website" name="website" value="${contact.website}" placeholder="Веб сайт" maxlength="150"/>
                     </div>
                     <div class="form-group">
                         <label for="email">Email</label>
-                        <input type="email" class="form-control" id="email" name="email" value="${contact.email}" placeholder="Email">
+                        <input type="email" class="form-control" id="email" name="email" value="${contact.email}" placeholder="Email" maxlength="150" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" required/>
                     </div>
                     <div class="form-group">
                         <label for="company">Место работы</label>
-                        <input type="text" class="form-control" id="company" name="company" value="${contact.company}" placeholder="Место работы">
+                        <input type="text" class="form-control" id="company" name="company" value="${contact.company}" placeholder="Место работы" maxlength="150" required/>
                     </div>
                     <div class="form-group">
                         <input type="text" class="hidden" id="contactMaritalStatus" value="${contact.maritalStatus}"/>
@@ -118,7 +114,7 @@
                 <div class="col-xs-6">
                     <div class="form-group">
                         <label for="city">Город</label>
-                        <input type="text" class="form-control" id="city" name="city" value="${contact.address.city}" placeholder="Город">
+                        <input type="text" class="form-control" id="city" name="city" value="${contact.address.city}" placeholder="Город" maxlength="150" required/>
                     </div>
                 </div>
             </div>
@@ -127,23 +123,23 @@
                 <div class="col-xs-6">
                     <div class="form-group">
                         <label for="street">Улица</label>
-                        <input type="text" class="form-control" id="street" name="street" value="${contact.address.street}" placeholder="Улица">
+                        <input type="text" class="form-control" id="street" name="street" value="${contact.address.street}" placeholder="Улица" maxlength="150" required/>
                     </div>
                     <div class="form-group">
                         <label for="zipCode">Индекс</label>
-                        <input type="text" class="form-control" id="zipCode" name="zipCode" value="${contact.address.zipCode}" placeholder="Индекс">
+                        <input type="text" class="form-control" id="zipCode" name="zipCode" value="${contact.address.zipCode}" placeholder="Индекс" maxlength="10"/>
                     </div>
                 </div>
                 <div class="col-xs-3">
                     <div class="form-group">
                         <label for="houseNumber">Номер дома</label>
-                        <input type="text" class="form-control" id="houseNumber" name="houseNumber" value="${contact.address.houseNumber}" placeholder="Номер дома">
+                        <input type="text" class="form-control" id="houseNumber" name="houseNumber" value="${contact.address.houseNumber}" placeholder="Номер дома" maxlength="150" required/>
                     </div>
                 </div>
                 <div class="col-xs-3">
                     <div class="form-group">
                         <label for="apartmentNumber">Квартира</label>
-                        <input type="text" class="form-control" id="apartmentNumber" name="apartmentNumber" value="${contact.address.apartmentNumber}" placeholder="Квартира">
+                        <input type="text" class="form-control" id="apartmentNumber" name="apartmentNumber" value="${contact.address.apartmentNumber}" placeholder="Квартира" maxlength="45">
                     </div>
                 </div>
             </div>
@@ -283,15 +279,15 @@
                     <h3 id="phone-popup-message"></h3>
                     <div class="form-group">
                         <label for="countryCode">Код страны</label>
-                        <input type="text" class="form-control" id="countryCode" placeholder="+375">
+                        <input type="text" class="form-control" id="countryCode" placeholder="+375" maxlength="10" pattern="\+\d{1,3}"/>
                     </div>
                     <div class="form-group">
                         <label for="operatorCode">Код оператора</label>
-                        <input type="text" class="form-control" id="operatorCode" placeholder="Код оператора">
+                        <input type="text" class="form-control" id="operatorCode" placeholder="Код оператора" maxlength="10"/>
                     </div>
                     <div class="form-group">
                         <label for="phoneNumber">Телефонный номер</label>
-                        <input type="text" class="form-control" id="phoneNumber" placeholder="Телефонный номер">
+                        <input type="text" class="form-control" id="phoneNumber" placeholder="Телефонный номер" maxlength="10"/>
                     </div>
                     <div class="form-group">
                         <label for="phoneType">Тип телефона</label><br/>
@@ -302,7 +298,7 @@
                     </div>
                     <div class="form-group">
                         <label for="phoneComment">Комментарий</label>
-                        <textarea rows="6" cols="45" class="form-control" id="phoneComment"></textarea>
+                        <textarea rows="6" cols="45" class="form-control" id="phoneComment" maxlength="5000"></textarea>
                     </div>
                     <input type="button" id="phoneOk" value="Сохранить">
                     <input type="button" id="phoneCancel" value="Отменить">
@@ -315,7 +311,7 @@
                     <h3 id="attachment-popup-message"></h3><br/>
                     <div class="form-group">
                         <label for="fileName">Имя файла</label>
-                        <input type="text" class="form-control" id="fileName" placeholder="Имя файла">
+                        <input type="text" class="form-control" id="fileName" placeholder="Имя файла" maxlength="100"/>
                     </div>
                     <div id="attachmentPopupFileChooserBlock" class="form-group">
                         <label for="popupAttachmentText">Выбор файла</label><br/>
@@ -325,7 +321,7 @@
                     </div>
                     <div class="form-group">
                         <label for="attachmentComment">Комментарий</label>
-                        <textarea rows="6" cols="45" class="form-control" id="attachmentComment"></textarea>
+                        <textarea rows="6" cols="45" class="form-control" id="attachmentComment" maxlength="5000"></textarea>
                     </div>
                     <input type="button" id="attachmentOk" value="Сохранить">
                     <input type="button" id="attachmentCancel" value="Отменить">

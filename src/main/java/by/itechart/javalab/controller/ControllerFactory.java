@@ -32,7 +32,7 @@ public class ControllerFactory {
         try {
             controller = (Controller) Class.forName(controllerMap.get(action)).newInstance();
             if (controller == null) {
-                controller = (Controller) Class.forName(controllerMap.get("404")).newInstance();
+                controller = (Controller) Class.forName(controllerMap.get("error")).newInstance();
             }
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
             log.error(ex);

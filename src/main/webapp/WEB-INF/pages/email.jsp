@@ -25,11 +25,11 @@
                 <div class="col-md-12">
                     <div class="form-group">
                         <label for="recipients">Кому</label>
-                        <input type="text" class="form-control" id="recipients" value="${emails}" name="recipients" placeholder="Кому">
+                        <input type="text" class="form-control" id="recipients" value="${emails}" name="recipients" placeholder="Кому" pattern="([a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3},?)+" required>
                     </div>
                     <div class="form-group">
                         <label for="subject">Тема</label>
-                        <input type="text" class="form-control" id="subject" name="subject" placeholder="Тема">
+                        <input type="text" class="form-control" id="subject" name="subject" placeholder="Тема" maxlength="150" required/>
                     </div>
                     <div class="form-group">
                         <label for="template">Шаблон</label><br/>
@@ -39,7 +39,7 @@
                     </div>
                     <div class="form-group">
                         <label for="text">Текст:</label>
-                        <textarea class="form-control" rows="12" id="text" name="text"></textarea>
+                        <textarea class="form-control" rows="12" id="text" name="text" maxlength="5000"></textarea>
                     </div>
                 </div>
             </div>
@@ -51,7 +51,7 @@
                     <button type="submit" class="btn btn-success btn-lg button-size">Отправить</button>
                 </div>
                 <div class="col-md-1 text-center">
-                    <button type="submit" class="btn btn-info btn-lg button-size">Назад</button>
+                    <button id="backButton" type="submit" class="btn btn-info btn-lg button-size">Назад</button>
                 </div>
             </div>
 
@@ -60,6 +60,8 @@
     </div>
 
     <div class="page-bottom"></div>
+
+    <script src="${pageContext.request.contextPath}/resources/js/email/emailPage.js"></script>
 
 </body>
 </html>

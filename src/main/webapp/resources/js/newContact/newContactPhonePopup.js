@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
     function validateData() {
         var val = document.getElementById('countryCode').value;
-        if (!val || val.match(/^\+\d+$/) == null) {
+        if (!val || val.match(/^\+\d{1,3}$/) == null) {
             alert("Incorrect countryCode");
             return false;
         }
@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function(){
             return false;
         }
         return true;
-    }       // TODO make html input length validation
+    }
 
     function complete() {
         document.getElementById('countryCode').value = "";

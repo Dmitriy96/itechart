@@ -19,9 +19,11 @@ public class SendEmailService {
         Properties properties = new Properties();
         try {
             properties.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("config.properties"));
-        } catch (IOException e) {}
-        username = properties.getProperty("gmail.username");
-        password = properties.getProperty("gmail.password");
+        } catch (IOException e) {
+            log.error(e);
+        }
+        username = properties.getProperty("mail.username");
+        password = properties.getProperty("mail.password");
         log.debug(username, password);
     }
 
@@ -31,8 +33,8 @@ public class SendEmailService {
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.host", "smtp.gmail.com");
-        props.put("mail.smtp.port", "587");
+        props.put("mail.smtp.host", "smtp.mail.ru");
+        props.put("mail.smtp.port", "25");
         Session session = Session.getInstance(props,
                 new javax.mail.Authenticator() {
                     protected PasswordAuthentication getPasswordAuthentication() {

@@ -5,6 +5,7 @@ import by.itechart.javalab.service.EmailAttributes;
 import by.itechart.javalab.service.FindContactService;
 import by.itechart.javalab.service.SendEmailService;
 import by.itechart.javalab.service.ServiceException;
+import by.itechart.javalab.util.MainUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -25,6 +26,7 @@ public class EmailController implements Controller {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) {
+        log.debug("doPost: {}", request.getPathInfo());
         String splittedURL[] = request.getPathInfo().split("/");
         if (splittedURL.length > 2) {
             if ("send".equals(splittedURL[2]))
@@ -39,11 +41,12 @@ public class EmailController implements Controller {
         emailAttributes.setEmailText(request.getParameter("text"));
         emailAttributes.setEmailTitle(request.getParameter("subject"));
         emailAttributes.setRecipientEmails(request.getParameter("recipients"));
-        emailAttributes.setFromEmail("sankodmitriy100796@gmail.com");       // TODO change to some another
+        emailAttributes.setFromEmail(MainUtils.getEmail());
         try {
             SendEmailService.sendEmail(emailAttributes);
-            request.getServletContext().getRequestDispatcher("/pages/contacts").forward(request, response);
-        } catch (ServiceException | ServletException | IOException e) {
+            String path = request.getContextPath() + "/pages/contacts";
+            response.sendRedirect(path);
+        } catch (ServiceException | IOException e) {
             log.error(e);
         }
     }

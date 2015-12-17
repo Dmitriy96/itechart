@@ -111,8 +111,8 @@
             <div class="row text-center">
                 <div class="col-lg-12">
                     <ul class="pager">
-                        <li><a id="previousPage" href="${pageContext.request.contextPath}/pages/contacts" class="disabled">Предыдущая</a></li>
-                        <li><a id="nextPage" href="${pageContext.request.contextPath}/pages/contacts" class="disabled">Следующая</a></li>
+                        <li id="previousPage" data-url="${pageContext.request.contextPath}/pages/contacts" class="disabled"><a href="">Предыдущая</a></li>
+                        <li id="nextPage" data-url="${pageContext.request.contextPath}/pages/contacts" class="disabled"><a href="">Следующая</a></li>
                     </ul>
                 </div>
             </div>

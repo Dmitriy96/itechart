@@ -2,9 +2,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     var table = document.getElementById('contactsTable');
     emptyTableCheck(table);
-    createCheckboxListeners();
+    updateCheckboxes();
     resolvePagination();
-    saveSearchAttributes();
+    createCheckboxListeners();
+    updateSearchAttributes();
 
     function emptyTableCheck(table) {
         var emptyContactsTableRow = document.getElementById('emptyContacts');
@@ -17,47 +18,64 @@ document.addEventListener('DOMContentLoaded', function() {
         var hasNext = document.getElementById("hasNext").value;
         var hasPrevious = document.getElementById("hasPrevious").value;
         if (hasNext == "true") {
+            document.getElementById("nextPage").classList.remove("disabled");
+        }
+        if (hasPrevious == "true") {
             document.getElementById("previousPage").classList.remove("disabled");
         }
-        if (hasPrevious == "true")
-            document.getElementById("previousPage").classList.remove("disabled");
     }
 
-    function saveSearchAttributes() {
+    function updateSearchAttributes() {
         var searchAttributes = document.getElementById("contactSearchAttributes").children;
-        for (var i = 0; i < searchAttributes.length; i++) {
-            sessionStorage.setItem(searchAttributes[i].name, searchAttributes[i].value);
+        if (sessionStorage.getItem("isSearch") === null) {
+            for (var i = 0; i < searchAttributes.length; i++) {
+                sessionStorage.setItem(searchAttributes[i].name, searchAttributes[i].value);
+            }
+        } else {
+            for (i = 0; i < searchAttributes.length; i++) {
+                searchAttributes[i].value = sessionStorage.getItem(searchAttributes[i].name);
+            }
         }
     }
 
     document.getElementById("nextPage").onclick = function() {
-        try {
-            document.getElementById("isLowerIds").value = false;
-            var form = document.getElementById("contactsForm");
-            form.setAttribute("action", this.getAttribute("href"));
-            form.setAttribute("method", "post");
-            var startContactIdForNextPage = document.getElementById("startContactIdForNextPage").value;
-            console.log("startContactIdForNextPage: " + startContactIdForNextPage);
-            document.getElementById("startContactIdForPage").value = startContactIdForNextPage;
-        } catch (e) {
-            console.log(e);
-            alert("H");
-        }
+        updateCheckboxes();
+        document.getElementById("isLowerIds").value = false;
+        var form = document.getElementById("contactsForm");
+        form.setAttribute("action", this.getAttribute("data-url"));
+        form.setAttribute("method", "post");
+        var startContactIdForNextPage = document.getElementById("startContactIdForNextPage").value;
+        document.getElementById("startContactIdForPage").value = startContactIdForNextPage;
         form.submit();
         return false;
     };
 
     document.getElementById("previousPage").onclick = function() {
+        updateCheckboxes();
         document.getElementById("isLowerIds").value = true;
         var form = document.getElementById("contactsForm");
-        form.setAttribute("action", this.getAttribute("href"));
+        form.setAttribute("action", this.getAttribute("data-url"));
         form.setAttribute("method", "post");
         var startContactIdForPreviousPage = document.getElementById("startContactIdForPreviousPage").value;
-        console.log("startContactIdForPreviousPage: " + startContactIdForPreviousPage);
         document.getElementById("startContactIdForPage").value = startContactIdForPreviousPage;
         form.submit();
         return false;
     };
+
+    function updateCheckboxes() {
+        var checkedContacts = sessionStorage.getItem("checkedContacts");
+        if (checkedContacts !== null) {
+            var contactsId = JSON.parse(checkedContacts);
+            var checkboxesOfPage = document.getElementsByName("contact");
+            for (var i = 0; i < checkboxesOfPage.length; i++) {
+                for (var j = 0; j < contactsId.length; j++) {
+                    if (checkboxesOfPage[i].value == contactsId[j]) {
+                        checkboxesOfPage[i].checked = true;
+                    }
+                }
+            }
+        }
+    }
 
     document.getElementById("sendEmailButton").onclick = function() {
         var form = document.getElementById("contactsForm");

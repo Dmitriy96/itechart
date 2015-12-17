@@ -1,6 +1,7 @@
 package by.itechart.javalab.controller.impl;
 
 import by.itechart.javalab.controller.Controller;
+import by.itechart.javalab.controller.ControllerException;
 import by.itechart.javalab.entity.*;
 import by.itechart.javalab.service.ContactAttributesService;
 import by.itechart.javalab.service.ModificationContactService;
@@ -8,6 +9,7 @@ import by.itechart.javalab.service.ServiceException;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -46,9 +48,6 @@ public class NewContactController implements Controller {
             return;
         }
         DiskFileItemFactory factory = new DiskFileItemFactory();
-        /*File repository = new File(attachmentsDirectory);
-        factory.setSizeThreshold(DiskFileItemFactory.DEFAULT_SIZE_THRESHOLD);
-        factory.setRepository(repository);*/
 
         ServletFileUpload upload = new ServletFileUpload(factory);
         upload.setFileSizeMax(MAX_FILE_SIZE);
@@ -77,12 +76,22 @@ public class NewContactController implements Controller {
         try {
             contact = createContact();
             savedContact = ModificationContactService.addNewContact(contact);
-            for (ContactAttachment attachment : savedContact.getAttachmentList()) {
-                log.debug("saved attachment id: " + attachment.getIdAttachment() + " " + attachment.getFileName());
-            }
-        } catch (ParseException | ServiceException e) {
+        } catch (ParseException | ControllerException e) {
             log.error(e);
-            return;
+            request.setAttribute("invalidInput", "Invalid input.");
+            try {
+                request.getServletContext().getRequestDispatcher("/WEB-INF/pages/newContact.jsp").forward(request, response);
+            } catch (ServletException | IOException e1) {
+                log.error(e1);
+            }
+        } catch (ServiceException e) {
+            log.error(e);
+            request.setAttribute("error", "Sorry, contact hasn't been saved.");
+            try {
+                request.getServletContext().getRequestDispatcher("/WEB-INF/pages/newContact.jsp").forward(request, response);
+            } catch (ServletException | IOException e1) {
+                log.error(e1);
+            }
         }
 
         String attachmentsDirectory = request.getServletContext().getInitParameter("attachmentsDirectory");
@@ -131,7 +140,7 @@ public class NewContactController implements Controller {
         }
     }
 
-    private Contact createContact() throws ParseException {
+    private Contact createContact() throws ParseException, ControllerException {
         Contact contact = new Contact();
         setPersonalData(contact);
         setAddressToContact(contact);
@@ -140,8 +149,15 @@ public class NewContactController implements Controller {
         return contact;
     }
 
-    private void setPersonalData(Contact contact) throws ParseException {
+    private void checkCorrectness(String inputName) throws ControllerException {
+        if (StringUtils.isEmpty(formFields.get(inputName)))
+            throw new ControllerException("Invalid input.");
+    }
+
+    private void setPersonalData(Contact contact) throws ParseException, ControllerException {
+        checkCorrectness("name");
         contact.setName(formFields.get("name"));
+        checkCorrectness("surname");
         contact.setSurname(formFields.get("surname"));
         contact.setPatronymic(formFields.get("patronymic"));
         SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
@@ -154,7 +170,9 @@ public class NewContactController implements Controller {
         }
         contact.setCitizenship(formFields.get("citizenship"));
         contact.setWebsite(formFields.get("website"));
+        checkCorrectness("email");
         contact.setEmail(formFields.get("email"));
+        checkCorrectness("company");
         contact.setCompany(formFields.get("company"));
         String maritalStatus = formFields.get("marital");
         for (MaritalStatus status : MaritalStatus.values()) {
@@ -164,24 +182,30 @@ public class NewContactController implements Controller {
         }
     }
 
-    private void setAddressToContact(Contact contact) {
+    private void setAddressToContact(Contact contact) throws ControllerException {
         Address address = new Address();
+        if ("NONE".equals(formFields.get("country")))
+            throw new ControllerException("Invalid input.");
         address.setCountry(formFields.get("country"));
+        checkCorrectness("city");
         address.setCity(formFields.get("city"));
+        checkCorrectness("street");
         address.setStreet(formFields.get("street"));
+        checkCorrectness("houseNumber");
         address.setHouseNumber(formFields.get("houseNumber"));
         address.setApartmentNumber(formFields.get("apartmentNumber"));
-        address.setZipCode(Integer.parseInt(formFields.get("zipCode")));
+        address.setZipCode(formFields.get("zipCode"));
         contact.setAddress(address);
     }
 
-    private void setPhonesToContact(Contact contact) {
+    private void setPhonesToContact(Contact contact) throws ControllerException {
         List<ContactPhone> contactPhones = new ArrayList<>();
         int i = 0;
         while (formFields.get("countryCode" + i) != null) {
             ContactPhone phone = new ContactPhone();
             phone.setCountryCode(Integer.parseInt(formFields.get("countryCode" + i)));
             phone.setOperatorCode(Integer.parseInt(formFields.get("operatorCode" + i)));
+            checkCorrectness("operatorCode" + i);
             phone.setPhoneNumber(Integer.parseInt(formFields.get("phoneNumber" + i)));
             String phoneType = formFields.get("phoneType" + i);
             for (PhoneType phoneTypeValue : PhoneType.values()) {
@@ -197,12 +221,14 @@ public class NewContactController implements Controller {
         contact.setPhoneList(contactPhones);
     }
 
-    private void setAttachmentsToContact(Contact contact) {
+    private void setAttachmentsToContact(Contact contact) throws ControllerException {
         List<ContactAttachment> contactAttachments = new ArrayList<>();
         int i = 0;
         while (formFields.get("fileName" + i) != null) {
             ContactAttachment attachment = new ContactAttachment();
+            checkCorrectness("fileName" + i);
             attachment.setFileName(formFields.get("fileName" + i));
+            checkCorrectness("attachingDate" + i);
             attachment.setUploadDate(new Date(Long.parseLong(formFields.get("attachingDate" + i))));
             attachment.setComment(formFields.get("attachmentComment" + i));
             attachment.setIdAttachment(contact.getIdContact());
