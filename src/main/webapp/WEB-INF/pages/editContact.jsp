@@ -390,7 +390,6 @@
     <script src="${pageContext.request.contextPath}/resources/js/editContact/editContactPhonePopup.js"></script>
     <script src="${pageContext.request.contextPath}/resources/js/editContact/editContactAttachmentPopup.js"></script>
     <script src="${pageContext.request.contextPath}/resources/js/editContact/editContactPage.js"></script>
-    <script src="${pageContext.request.contextPath}/resources/js/calendar.js"></script>
 
 </body>
 </html>

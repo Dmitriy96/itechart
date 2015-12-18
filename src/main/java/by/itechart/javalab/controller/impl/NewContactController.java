@@ -105,7 +105,6 @@ public class NewContactController implements Controller {
                 FileItem item = iterator.next();
                 String realFileName = item.getName();
                 String fieldName = item.getFieldName();
-                log.debug("file name: " + realFileName);
                 String filePath = null;
                 if ("userImage".equals(item.getFieldName())) {
                     filePath = imagesDirectory + File.separator + savedContact.getIdContact() + realFileName.substring(realFileName.lastIndexOf("."));

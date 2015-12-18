@@ -19,13 +19,14 @@
 
         <h1 class="page-header">Отправить email</h1>
 
-        <form method="post" action="${pageContext.request.contextPath}/pages/email/send" role="form">
+        <form id="emailForm" method="post" action="${pageContext.request.contextPath}/pages/email/send" role="form">
 
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group">
                         <label for="recipients">Кому</label>
                         <input type="text" class="form-control" id="recipients" value="${emails}" name="recipients" placeholder="Кому" pattern="([a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3},?)+" required>
+                        <input type="text" id="emailContactsId" name="emailContactsId" value="${emailContactsId}" class="hidden"/>
                     </div>
                     <div class="form-group">
                         <label for="subject">Тема</label>
@@ -33,13 +34,22 @@
                     </div>
                     <div class="form-group">
                         <label for="template">Шаблон</label><br/>
-                        <select id="template">
-                            <option value="NONE">--- Выбор ---</option>
+                        <select id="template" name="template" data-url="${pageContext.request.contextPath}/pages/email">
+                            <option value="NONE" selected>--- Выбор ---</option>
+                            <c:forEach items="${templates}" var="template">
+                                <option value="${template}">${template}</option>
+                            </c:forEach>
                         </select>
                     </div>
-                    <div class="form-group">
+                    <div id="defaultInputBlock" class="form-group">
                         <label for="text">Текст:</label>
                         <textarea class="form-control" rows="12" id="text" name="text" maxlength="5000"></textarea>
+                    </div>
+                    <div id="templateBlock">
+                        <div id="chosenTemplate" class="hidden">
+                            ${chosenTemplate}
+                        </div>
+                        <input type="text" id="chosenValue" class="hidden" value="${chosenValue}"/>
                     </div>
                 </div>
             </div>
@@ -48,7 +58,7 @@
 
             <div class="row">
                 <div class="col-md-3 col-md-offset-3 text-center">
-                    <button type="submit" class="btn btn-success btn-lg button-size">Отправить</button>
+                    <button id="sendButton" type="submit" data-url="${pageContext.request.contextPath}/pages/email/send" class="btn btn-success btn-lg button-size">Отправить</button>
                 </div>
                 <div class="col-md-1 text-center">
                     <button id="backButton" type="submit" class="btn btn-info btn-lg button-size">Назад</button>

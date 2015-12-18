@@ -59,7 +59,7 @@ public class FindContactService {
     }
 
     public static List<String> getEmails(Integer contactsID[]) throws ServiceException {
-        log.debug("getEmails: ");
+        log.debug("getEmails: {}", contactsID.length);
         List<String> emails = new ArrayList<>();
         try {
             DaoFactory daoFactory = DaoFactory.getDaoFactory();

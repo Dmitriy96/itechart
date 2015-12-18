@@ -47,7 +47,7 @@ public class SendEmailService {
             message.setRecipients(Message.RecipientType.TO,
                     InternetAddress.parse(emailAttributes.getRecipientEmails()));
             message.setSubject(emailAttributes.getEmailTitle());
-            message.setText(emailAttributes.getEmailText());
+            message.setContent(emailAttributes.getEmailText(), "text/html; charset=utf-8");
             Transport.send(message);
         } catch (MessagingException e) {
             log.error(e);

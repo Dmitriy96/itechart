@@ -29,6 +29,10 @@
         <param-name>imagesDirectory</param-name>
         <param-value>C:\Users\Dmitriy\Documents\Installers\Apache Tomcat\apache-tomcat-7.0.65\webapps\ContactsCatalog\resources\images</param-value>
     </context-param>
+    <context-param>
+        <param-name>templatesDirectory</param-name>
+        <param-value>C:\Users\Dmitriy\Documents\Installers\Apache Tomcat\apache-tomcat-7.0.65\webapps\ContactsCatalog\resources\templates</param-value>
+    </context-param>
 
     <servlet>
         <servlet-name>ContactsServlet</servlet-name>

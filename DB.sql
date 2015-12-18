@@ -342,3 +342,5 @@ DROP COLUMN `alpha2`,
 DROP COLUMN `name`;
 ALTER TABLE `dmitriysanko`.`country` 
 ADD INDEX `countryIndex` (`fullName` ASC, `idCountryCode` ASC);
+ALTER TABLE `dmitriysanko`.`contact`
+CHANGE COLUMN `zipCode` `zipCode` VARCHAR(10) NULL DEFAULT NULL ;

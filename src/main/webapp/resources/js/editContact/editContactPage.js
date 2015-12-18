@@ -54,15 +54,12 @@ document.addEventListener('DOMContentLoaded', function(){
     }
 
     function renamePhoneHiddenInputs() {
-        console.log("-------------renamePhoneHiddenInputs----------------");
         var hiddenPhonesInputList = document.getElementById('hiddenPhonesInputList');
         var phonesInitialCount = document.getElementById("phonesInitialCount").value;
         var i;
-        console.log("phonesInitialCount: " + phonesInitialCount);
         for (i = 0; i < phonesInitialCount; i++) {
             for (var j = 0; j < phoneDataInputIDs.length; j++) {
                 var hiddenInput = hiddenPhonesInputList.children[i * phoneDataInputIDs.length + j];
-                console.log("hiddenInput form first cycle: " + hiddenInput);
                 if (hiddenInput.getAttribute("data-delete") == "true") {
                     hiddenInput.name = "delete" + phoneDataInputIDs[i] + i;
                     continue;
@@ -71,15 +68,9 @@ document.addEventListener('DOMContentLoaded', function(){
                     hiddenInput.name = "update" + phoneDataInputIDs[i] + i;
             }
         }
-        console.log("i: " + i);
-        console.log("hiddenPhonesInputList.childElementCount / phoneDataInputIDs.length: " + hiddenPhonesInputList.childElementCount / phoneDataInputIDs.length);
         for (; i < hiddenPhonesInputList.childElementCount / phoneDataInputIDs.length; i++) {
             for (j = 0; j < phoneDataInputIDs.length; j++) {
-                console.log(i * phoneDataInputIDs.length + j);
-                console.log(hiddenPhonesInputList);
                 hiddenInput = hiddenPhonesInputList.children[i * phoneDataInputIDs.length + j];
-                console.log(hiddenPhonesInputList.children[i * phoneDataInputIDs.length + j]);
-                console.log(hiddenInput);
                 hiddenInput.name = "new" + phoneDataInputIDs[j] + i;
             }
         }
@@ -114,7 +105,6 @@ document.addEventListener('DOMContentLoaded', function(){
         var form = document.getElementById("contactForm");
         form.setAttribute("action", this.getAttribute("data-url"));
         form.setAttribute("method", "post");
-        console.log("saveButton clicked");
         form.submit();
     };
     document.getElementById("cancelButton").onclick = function() {

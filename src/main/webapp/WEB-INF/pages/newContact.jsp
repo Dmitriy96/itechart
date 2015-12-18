@@ -14,8 +14,6 @@
     <link href="${customCss}" rel="stylesheet"/>
     <c:url value="/resources/css/popup.css" var="popupCss"/>
     <link href="${popupCss}" rel="stylesheet"/>
-    <c:url value="/resources/css/calendar.css" var="calendarCss"/>
-    <link href="${calendarCss}" rel="stylesheet"/>
 </head>
 <body>
 
@@ -338,7 +336,6 @@
     <script src="${pageContext.request.contextPath}/resources/js/newContact/newContactPage.js"></script>
     <script src="${pageContext.request.contextPath}/resources/js/newContact/newContactPhonePopup.js"></script>
     <script src="${pageContext.request.contextPath}/resources/js/newContact/newContactAttachmentPopup.js"></script>
-    <script src="${pageContext.request.contextPath}/resources/js/calendar.js"></script>
 
 </body>
 </html>
