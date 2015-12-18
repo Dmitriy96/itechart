@@ -57,9 +57,9 @@ public class ContactsController implements Controller {
 
     private void deleteContacts(HttpServletRequest request, HttpServletResponse response, String deletingContactsId) {
         String checkedContactIds[] = deletingContactsId.split(",");
-        Integer contactsId[] = new Integer[checkedContactIds.length];
+        Long contactsId[] = new Long[checkedContactIds.length];
         for (int i = 0; i < checkedContactIds.length; i++) {
-            contactsId[i] = Integer.parseInt(checkedContactIds[i]);
+            contactsId[i] = Long.parseLong(checkedContactIds[i]);
         }
         List<Contact> contacts = new ArrayList<>();
         try {

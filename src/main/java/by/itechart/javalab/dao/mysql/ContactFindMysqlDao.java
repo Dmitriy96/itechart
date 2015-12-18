@@ -152,7 +152,7 @@ public final class ContactFindMysqlDao implements ContactFindDao {
                 preparedStatementParameters.put(parameterPosition, searchAttributes.getAddress().getApartmentNumber());
                 parameterPosition++;
             }
-            if (searchAttributes.getAddress().getZipCode() != null) {
+            if (StringUtils.isNotEmpty(searchAttributes.getAddress().getZipCode())) {
                 preparedStatementSQL.append("AND zipCode = ? ");
                 preparedStatementParameters.put(parameterPosition, searchAttributes.getAddress().getZipCode());
                 parameterPosition++;
@@ -162,6 +162,7 @@ public final class ContactFindMysqlDao implements ContactFindDao {
             else
                 preparedStatementSQL.append("AND idContact > ? ORDER BY idContact ASC LIMIT ?");
             statement = connection.prepareStatement(preparedStatementSQL.toString());
+            log.debug(preparedStatementSQL.toString());
             statement.setBoolean(1, true);
             statement.setInt(parameterPosition, offset);
             statement.setInt(++parameterPosition, MAX_CONTACTS_NUMBER);
@@ -207,7 +208,7 @@ public final class ContactFindMysqlDao implements ContactFindDao {
     }
 
     @Override
-    public Contact getContact(Integer contactId) throws DaoException {
+    public Contact getContact(Long contactId) throws DaoException {
         log.debug("getContact: {}", contactId);
         Connection connection = null;
         PreparedStatement statement = null;
@@ -229,7 +230,7 @@ public final class ContactFindMysqlDao implements ContactFindDao {
                     "JOIN attachment " +
                     "on attachment.Contact_idContact = contact.idContact " +
                     "WHERE contact.idContact = ? AND contact.available = ? and phone.available = ? and attachment.available = ?");
-            statement.setInt(1, contactId);
+            statement.setLong(1, contactId);
             statement.setBoolean(2, true);
             statement.setBoolean(3, true);
             statement.setBoolean(4, true);
@@ -308,7 +309,7 @@ public final class ContactFindMysqlDao implements ContactFindDao {
     }
 
     @Override
-    public List<String> getEmails(Integer[] contactId) throws DaoException {
+    public List<String> getEmails(Long[] contactId) throws DaoException {
         log.debug("getEmails: ");
         Connection connection = null;
         PreparedStatement statement = null;
@@ -317,8 +318,8 @@ public final class ContactFindMysqlDao implements ContactFindDao {
         try {
             connection = PersistenceManager.createConnection();
             statement = connection.prepareStatement("SELECT email FROM contact WHERE idContact = ?");
-            for (Integer id : contactId) {
-                statement.setInt(1, id);
+            for (Long id : contactId) {
+                statement.setLong(1, id);
                 resultSet = statement.executeQuery();
                 while (resultSet.next()) {
                     emails.add(resultSet.getString("email"));

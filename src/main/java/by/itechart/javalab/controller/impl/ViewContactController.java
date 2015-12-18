@@ -23,7 +23,7 @@ public class ViewContactController implements Controller {
         if (splittedURL.length != 3) return;
         Contact contact = null;
         try {
-            Integer contactId = Integer.parseInt(splittedURL[2]);
+            Long contactId = Long.parseLong(splittedURL[2]);
             contact = FindContactService.getContact(contactId);
             request.setAttribute("contact", contact);
             request.getServletContext().getRequestDispatcher("/WEB-INF/pages/contact.jsp").forward(request, response);

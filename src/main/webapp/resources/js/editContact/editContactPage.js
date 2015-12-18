@@ -61,16 +61,20 @@ document.addEventListener('DOMContentLoaded', function(){
             for (var j = 0; j < phoneDataInputIDs.length; j++) {
                 var hiddenInput = hiddenPhonesInputList.children[i * phoneDataInputIDs.length + j];
                 if (hiddenInput.getAttribute("data-delete") == "true") {
-                    hiddenInput.name = "delete" + phoneDataInputIDs[i] + i;
+                    hiddenInput.name = "delete" + phoneDataInputIDs[j] + i;
                     continue;
                 }
                 if (hiddenInput.getAttribute("data-change") == "true")
-                    hiddenInput.name = "update" + phoneDataInputIDs[i] + i;
+                    hiddenInput.name = "update" + phoneDataInputIDs[j] + i;
             }
         }
         for (; i < hiddenPhonesInputList.childElementCount / phoneDataInputIDs.length; i++) {
             for (j = 0; j < phoneDataInputIDs.length; j++) {
+                console.log(i * phoneDataInputIDs.length + j);
+                console.log(hiddenPhonesInputList);
                 hiddenInput = hiddenPhonesInputList.children[i * phoneDataInputIDs.length + j];
+                console.log(hiddenPhonesInputList.children[i * phoneDataInputIDs.length + j]);
+                console.log(hiddenInput);
                 hiddenInput.name = "new" + phoneDataInputIDs[j] + i;
             }
         }
@@ -84,11 +88,13 @@ document.addEventListener('DOMContentLoaded', function(){
             for (var j = 0; j < attachmentDataInputIDs.length; j++) {
                 var hiddenInput = hiddenAttachmentsInputList.children[i * attachmentDataInputIDs.length + j];
                 if (hiddenInput.getAttribute("data-delete") == "true") {
-                    hiddenInput.name = "delete" + attachmentDataInputIDs[i] + i;
+                    hiddenInput.name = "delete" + attachmentDataInputIDs[j] + i;
                     continue;
                 }
+                console.log("data-change: " + hiddenInput.getAttribute("data-change"));
+                console.log(hiddenInput.getAttribute("data-change") == "true");
                 if (hiddenInput.getAttribute("data-change") == "true")
-                    hiddenInput.name = "update" + attachmentDataInputIDs[i] + i;
+                    hiddenInput.name = "update" + attachmentDataInputIDs[j] + i;
             }
         }
         for (; i < hiddenAttachmentsInputList.childElementCount / attachmentDataInputIDs.length; i++) {
@@ -105,6 +111,7 @@ document.addEventListener('DOMContentLoaded', function(){
         var form = document.getElementById("contactForm");
         form.setAttribute("action", this.getAttribute("data-url"));
         form.setAttribute("method", "post");
+        console.log("saveButton clicked");
         form.submit();
     };
     document.getElementById("cancelButton").onclick = function() {

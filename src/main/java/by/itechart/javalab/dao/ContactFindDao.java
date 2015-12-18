@@ -9,7 +9,7 @@ import java.util.List;
 public interface ContactFindDao {
     List<Contact> getContacts(Integer offset, boolean isLowerIds) throws DaoException;
     List<Contact> getContacts(ContactSearchAttributes searchAttributes, Integer offset, boolean isLowerIds) throws DaoException;
-    Contact getContact(Integer contactId) throws DaoException;
-    List <String> getEmails(Integer contactId[]) throws DaoException;
+    Contact getContact(Long contactId) throws DaoException;
+    List <String> getEmails(Long contactId[]) throws DaoException;
     List<Contact> getBirthdayContacts() throws DaoException;
 }

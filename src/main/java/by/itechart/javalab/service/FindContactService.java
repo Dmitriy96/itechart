@@ -44,7 +44,7 @@ public class FindContactService {
         return contacts;
     }
 
-    public static Contact getContact(Integer contactId) throws ServiceException {
+    public static Contact getContact(Long contactId) throws ServiceException {
         log.debug("getContact: " + contactId);
         Contact contact = null;
         try {
@@ -58,7 +58,7 @@ public class FindContactService {
         return contact;
     }
 
-    public static List<String> getEmails(Integer contactsID[]) throws ServiceException {
+    public static List<String> getEmails(Long contactsID[]) throws ServiceException {
         log.debug("getEmails: {}", contactsID.length);
         List<String> emails = new ArrayList<>();
         try {

@@ -38,7 +38,7 @@ public class EditContactController implements Controller {
         if (splittedURL.length != 3) return;
         Contact contact = null;
         try {
-            Integer contactId = Integer.parseInt(splittedURL[2]);
+            Long contactId = Long.parseLong(splittedURL[2]);
             contact = FindContactService.getContact(contactId);
             request.setAttribute("contact", contact);
             List<String> countries = ContactAttributesService.getAllCountries();
@@ -80,6 +80,10 @@ public class EditContactController implements Controller {
             log.error(ex);
             return;
         }
+        log.debug("formFields");
+        for (String key : formFields.keySet()) {
+            log.debug(key + " " + formFields.get(key));
+        }
         Contact contact = null;
         try {
             contact = new Contact();
@@ -87,7 +91,8 @@ public class EditContactController implements Controller {
             setAddressToContact(contact);
             Map<String, List<ContactPhone>> phoneGroups = getContactPhoneGroups(contact);
             Map<String, List<ContactAttachment>> attachmentGroups = getContactAttachmentGroups(contact);
-            contact = ModificationContactService.updateContact(contact, phoneGroups, attachmentGroups);
+            ModificationContactService.updateContact(contact, phoneGroups, attachmentGroups);
+            contact = FindContactService.getContact(contact.getIdContact());
         } catch (ParseException | ControllerException e) {
             log.error(e);
             request.setAttribute("invalidInput", "Invalid input.");
@@ -117,23 +122,21 @@ public class EditContactController implements Controller {
                 FileItem item = iterator.next();
                 String realFileName = item.getName();
                 String fieldName = item.getFieldName();
-                log.debug("realFileName: " + realFileName);
-                log.debug("fieldName: " + fieldName);
                 String filePath = null;
                 if ("userImage".equals(item.getFieldName())) {
-                    filePath = imagesDirectory + File.separator + contact.getIdContact() + realFileName.substring(realFileName.lastIndexOf("."));
+                    filePath = imagesDirectory + File.separator + contact.getIdContact() +
+                            realFileName.substring(realFileName.lastIndexOf("."));
                 } else {
                     Long attachmentId = null;
                     List<ContactAttachment> updatedAttachments = contact.getAttachmentList();
                     String fileIndex = fieldName.substring(7);                          // "newfile{fileIndex}"
-                    String fileName = formFields.get("fileName" + fileIndex);
-                    log.debug("fileIndex: " + fileIndex);
-                    log.debug("fileName: " + fileName);
+                    String fileName = formFields.get("newfileName" + fileIndex);
                     for (ContactAttachment attachment : updatedAttachments) {
-                        if (attachment.getFileName().equals(fileName)) {
+                        if (attachment.getFileName().equals(fileName) && StringUtils.isEmpty(attachment.getRealFileName())) {
                             attachmentId = attachment.getIdAttachment();
                             log.debug("attachmentId: " + attachmentId);
                             attachment.setRealFileName(realFileName);
+                            break;
                         }
                     }
                     filePath = attachmentsDirectory + File.separator + attachmentId + "_" + realFileName;
@@ -147,6 +150,7 @@ public class EditContactController implements Controller {
         } catch (Exception ex) {
             log.error(ex);
         }
+        //String action[] = {"update", "delete"};
     }
 
     private void ensureDirectoryExists(String directory) {
@@ -251,6 +255,7 @@ public class EditContactController implements Controller {
             int j = 0;
             List<ContactAttachment> attachments = new ArrayList<>();
             while (j < attachmentsInitialCount && formFields.get(actions[i] + "fileName" + j) != null) {
+                log.debug("getContactAttachmentGroups: " + actions[i] + "fileName" + j + ": id: " + Long.parseLong(formFields.get("id" + j)) + " fileName: " + formFields.get(actions[i] + "fileName" + j));
                 ContactAttachment attachment = new ContactAttachment();
                 checkCorrectness(actions[i] + "fileName" + j);
                 attachment.setFileName(formFields.get(actions[i] + "fileName" + j));
@@ -270,6 +275,7 @@ public class EditContactController implements Controller {
             ContactAttachment attachment = new ContactAttachment();
             checkCorrectness("new" + "fileName" + i);
             attachment.setFileName(formFields.get("new" + "fileName" + i));
+            log.debug("newfileName" + i + ": " + formFields.get("new" + "fileName" + i));
             checkCorrectness("new" + "attachingDate" + i);
             attachment.setUploadDate(new Date(Long.parseLong(formFields.get("new" + "attachingDate" + i))));
             attachment.setComment(formFields.get("new" + "attachmentComment" + i));

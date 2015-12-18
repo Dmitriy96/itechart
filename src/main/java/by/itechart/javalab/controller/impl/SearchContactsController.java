@@ -101,7 +101,7 @@ public class SearchContactsController implements Controller {
         String genderParameter = request.getParameter("gender");
         Gender gender = "NONE".equals(genderParameter) ? null : Gender.valueOf(genderParameter);
         searchAttributes.setGender(gender);
-        String maritalStatusParameter =  request.getParameter("marital");
+        String maritalStatusParameter = request.getParameter("marital");
         MaritalStatus maritalStatus = "NONE".equals(maritalStatusParameter) ? null : MaritalStatus.valueOf(maritalStatusParameter);
         searchAttributes.setMaritalStatus(maritalStatus);
         Address address = new Address();

@@ -25,12 +25,12 @@
                 <div class="col-md-12">
                     <div class="form-group">
                         <label for="recipients">Кому</label>
-                        <input type="text" class="form-control" id="recipients" value="${emails}" name="recipients" placeholder="Кому" pattern="([a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3},?)+" required>
+                        <input type="text" class="form-control" id="recipients" value="${recipients}" name="recipients" placeholder="Кому" pattern="([a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3},?)+" required>
                         <input type="text" id="emailContactsId" name="emailContactsId" value="${emailContactsId}" class="hidden"/>
                     </div>
                     <div class="form-group">
                         <label for="subject">Тема</label>
-                        <input type="text" class="form-control" id="subject" name="subject" placeholder="Тема" maxlength="150" required/>
+                        <input type="text" class="form-control" id="subject" name="subject" value="${subject}" placeholder="Тема" maxlength="150" required/>
                     </div>
                     <div class="form-group">
                         <label for="template">Шаблон</label><br/>
@@ -43,13 +43,15 @@
                     </div>
                     <div id="defaultInputBlock" class="form-group">
                         <label for="text">Текст:</label>
-                        <textarea class="form-control" rows="12" id="text" name="text" maxlength="5000"></textarea>
+                        <textarea class="form-control" rows="12" id="text" name="textareaContent" maxlength="5000"></textarea>
                     </div>
                     <div id="templateBlock">
                         <div id="chosenTemplate" class="hidden">
                             ${chosenTemplate}
                         </div>
-                        <input type="text" id="chosenValue" class="hidden" value="${chosenValue}"/>
+                        <div id="templateHiddenInputs" class="hidden">
+                            <input type="text" id="chosenValue" value="${chosenValue}"/>
+                        </div>
                     </div>
                 </div>
             </div>

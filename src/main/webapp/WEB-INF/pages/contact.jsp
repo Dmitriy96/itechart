@@ -21,14 +21,6 @@
             <div class="col-md-9">
                 <h1><c:out value="${contact.surname}"/> <c:out value="${contact.name}"/> <c:out value="${contact.patronymic}"/></h1>
             </div>
-            <div class="col-md-3 control-buttons-alignment">
-                <button type="button" class="btn btn-primary" title="Назад">
-                    <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span> Назад
-                </button>
-                <button type="button" class="btn btn-warning" title="Редактировать контакт">
-                    <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Редактировать
-                </button>
-            </div>
         </div>
 
         <div class="row">
@@ -37,7 +29,7 @@
                 class="img-responsive clickable"
                 src='${pageContext.request.contextPath}/resources/images/${contact.idContact}.jpg'
                 alt=""
-                onerror='../../resources/images/default_avatar.png'>
+                onerror='this.src="${pageContext.request.contextPath}/resources/images/default_avatar.png"'>
             </div>
             <div class="col-md-4">
                 <ul class="group-text-block">
@@ -169,6 +161,8 @@
     </div>
 
     <div class="page-bottom"></div>
+
+    <script src="${pageContext.request.contextPath}/resources/js/contact/contactPage.js"></script>
 
 </body>
 </html>

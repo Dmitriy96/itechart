@@ -2,7 +2,6 @@ document.addEventListener('DOMContentLoaded', function(){
 
     var container = document.getElementById('attachment-popup-form-container');
     var table = document.querySelector('table[datatype="attachment"]');
-    var attachmentDataInputIDs = ['file', 'fileName', 'attachingDate', 'attachmentComment'];
     var attachmentsInitialCount = document.getElementById("attachmentsInitialCount").value;
     emptyTableCheck(table);
 
@@ -136,13 +135,13 @@ document.addEventListener('DOMContentLoaded', function(){
         var checkBox = attachmentTableRow.querySelector('[type="checkbox"]');
         document.getElementById('attachmentPopupFileChooserBlock').className = 'hidden';
         var hiddenAttachmentsInputList = document.getElementById('hiddenAttachmentsInputList');
-        var attachmentDataInputIDs = ['fileName', 'attachmentComment', 'attachingDate'];
+        var attachmentDataInputIDs = ['fileName', 'attachmentComment'];
         document.getElementById('attachment-popup-message').innerHTML = "Изменение информации о файле";
         document.body.style.overflow = "hidden";
         setDataForEdition();
 
         function setDataForEdition() {
-            for (var i = 0; i < attachmentDataInputIDs.length - 1; i++) {
+            for (var i = 0; i < attachmentDataInputIDs.length; i++) {
                 var inputID = attachmentDataInputIDs[i];
                 document.getElementById(inputID).value =
                     hiddenAttachmentsInputList.querySelector('[name="' + inputID + checkBox.value + '"]').value;

@@ -46,17 +46,16 @@ public class ModificationContactService {
         return savedContact;
     }
 
-    public static Contact updateContact(Contact contact, Map<String, List<ContactPhone>> phoneGroups,
+    public static void updateContact(Contact contact, Map<String, List<ContactPhone>> phoneGroups,
                                         Map<String, List<ContactAttachment>> attachmentGroups) throws ServiceException{
         log.debug("updateContact: " + contact.getSurname() + " " + contact.getEmail());
-        Contact updatedContact = null;
         try {
             DaoFactory daoFactory = DaoFactory.getDaoFactory();
             ContactModificationDao modificationDao = daoFactory.getContactModificationDao();
             PersistenceManager.startTransaction();
             contact.setPhoneList(phoneGroups.get("update"));
             contact.setAttachmentList(attachmentGroups.get("update"));
-            updatedContact = modificationDao.updateContact(contact);
+            modificationDao.updateContact(contact);
             modificationDao.deleteContactPhones(phoneGroups.get("delete"));
             modificationDao.deleteContactAttachments(attachmentGroups.get("delete"));
             modificationDao.saveContactPhones(phoneGroups.get("new"));
@@ -74,10 +73,9 @@ public class ModificationContactService {
             log.error(e);
             throw new ServiceException("Can't update contact.", e);
         }
-        return updatedContact;
     }
 
-    public static void deleteContacts(Integer contactsId[]) throws ServiceException {
+    public static void deleteContacts(Long contactsId[]) throws ServiceException {
         log.debug("deleteContacts: ");
         try {
             DaoFactory daoFactory = DaoFactory.getDaoFactory();

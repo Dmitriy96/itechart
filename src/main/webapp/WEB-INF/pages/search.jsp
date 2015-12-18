@@ -24,7 +24,7 @@
             <div id="emptyFieldsError" class="alert alert-danger hidden" role="alert">
                 <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
                 <span class="sr-only">Error:</span>
-                All search fields can't be empty.
+                At least one fild should be filled.
             </div>
             <c:if test="${dateInvalidFormat != null}">
                 <div class="alert alert-danger hidden" role="alert">
@@ -59,30 +59,30 @@
                 <div class="col-md-3">
                     <div class="form-group">
                         <label for="lowerBirthday">Дата рождения (от)</label>
-                        <input type="date" class="form-control" id="lowerBirthday" name="lowerBirthday" placeholder="01.01.1980" pattern="\d{2}\.\d{2}\.\d{4}$">
+                        <input type="text" class="form-control" id="lowerBirthday" name="lowerBirthday" placeholder="01.01.1980" pattern="\d{2}\.\d{2}\.\d{4}"/>
                     </div>
                     <div class="form-group">
                         <label for="gender">Пол</label><br/>
                         <select id="gender" name="gender">
                             <option value="NONE">--- Выбор ---</option>
-                            <option value="Мужской">Мужской</option>
-                            <option value="Женский">Женский</option>
+                            <option value="MALE">Мужской</option>
+                            <option value="FEMALE">Женский</option>
                         </select>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="form-group">
                         <label for="upperBirthday">Дата рождения (до)</label>
-                        <input type="date" class="form-control" id="upperBirthday" name="upperBirthday" placeholder="01.01.1980" pattern="\d{2}\.\d{2}\.\d{4}$">
+                        <input type="text" class="form-control" id="upperBirthday" name="upperBirthday" placeholder="01.01.1980" pattern="\d{2}\.\d{2}\.\d{4}"/>
                     </div>
                     <div class="form-group">
                         <label for="marital">Семейное положение</label>
                         <select id="marital" name="marital">
                             <option value="NONE">--- Выбор ---</option>
-                            <option value="Женат/Замужем">Женат/Замужем</option>
-                            <option value="Разведён/Разведена">Разведён/Разведена</option>
-                            <option value="Холост/Не замужем">Холост/Не замужем</option>
-                            <option value="Вдовец/Вдова">Вдовец/Вдова</option>
+                            <option value="SINGLE">Холост/Не замужем</option>
+                            <option value="MARRIED">Женат/Замужем</option>
+                            <option value="DIVORCED">Разведён/Разведена</option>
+                            <option value="WIDOWED">Вдовец/Вдова</option>
                         </select>
                     </div>
                 </div>

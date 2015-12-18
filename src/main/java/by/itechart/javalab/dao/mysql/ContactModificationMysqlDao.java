@@ -64,7 +64,7 @@ public final class ContactModificationMysqlDao implements ContactModificationDao
     }
 
     @Override
-    public void deleteContacts(Integer[] contactsId) throws DaoException {
+    public void deleteContacts(Long[] contactsId) throws DaoException {
         log.debug("deleteContacts: ");
         Connection connection = null;
         PreparedStatement statement = null;
@@ -75,9 +75,9 @@ public final class ContactModificationMysqlDao implements ContactModificationDao
             for (int i = 0; i < tableName.length; i++) {
                 statement = connection.prepareStatement("UPDATE " + tableName[i] +
                         " SET available = ? WHERE " + columnName[i] + " = ?");
-                for (Integer id : contactsId) {
+                for (Long id : contactsId) {
                     statement.setBoolean(1, false);
-                    statement.setInt(2, id);
+                    statement.setLong(2, id);
                     statement.executeUpdate();
                 }
             }
@@ -139,7 +139,7 @@ public final class ContactModificationMysqlDao implements ContactModificationDao
 
     @Override
     public void updateContactAttachments(Contact contact) throws DaoException {
-        log.debug("updateContactAttachments: {}, {}", contact.getEmail(), contact.getPhoneList());
+        log.debug("updateContactAttachments: {}, {}", contact.getEmail(), contact.getAttachmentList());
         Connection connection = null;
         PreparedStatement statement = null;
         try {
@@ -441,7 +441,6 @@ public final class ContactModificationMysqlDao implements ContactModificationDao
                 ResultSet resultSet = statement.getGeneratedKeys();
                 if (resultSet.next()) {
                     int id = resultSet.getInt(1);
-                    log.debug("updatedContactAttachment: " + id);
                     attachment.setIdAttachment((long) id);
                 }
             }

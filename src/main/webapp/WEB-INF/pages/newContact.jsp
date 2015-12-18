@@ -44,7 +44,7 @@
                          class="img-responsive clickable"
                          src='${pageContext.request.contextPath}/resources/images/default_avatar.png'
                          alt=""
-                         onerror='${pageContext.request.contextPath}/resources/images/default_avatar.png'>
+                         onerror='this.src="${pageContext.request.contextPath}/resources/images/default_avatar.png"'>
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
@@ -235,9 +235,9 @@
                     <input type="button" value="Найти" id="findImageButton"/>
                     <img id="popup-image"
                          class="img-responsive img-centralize"
-                         src="${pageContext.request.contextPath}/resources/images/default_avatar.png"
+                         src="${pageContext.request.contextPath}/resources/images/${contact.idContact}.jpg"
                          alt=""
-                         onerror="${pageContext.request.contextPath}/resources/images/default_avatar.png">
+                         onerror='this.src="${pageContext.request.contextPath}/resources/images/default_avatar.png"'>
                     <input type="button" id="imageOk" value="Сохранить">
                     <input type="button" id="imageCancel" value="Отменить">
                 </div>
