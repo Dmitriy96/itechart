@@ -128,45 +128,89 @@ public class ContactsController implements Controller {
         searchAttributes.setSurname(request.getParameter("surname"));
         searchAttributes.setPatronymic(request.getParameter("patronymic"));
         searchAttributes.setCitizenship(request.getParameter("citizenship"));
+        Date birthdayDateFrom = parseBirthdayDateFrom(request, response);
+        searchAttributes.setBirthdayDateFrom(birthdayDateFrom);
+        Date birthdayDateTo = parseBirthdayDateTo(request, response);
+        searchAttributes.setBirthdayDateTo(birthdayDateTo);
+        Gender gender = parseGender(request);
+        searchAttributes.setGender(gender);
+        MaritalStatus maritalStatus = parseMaritalStatus(request);
+        searchAttributes.setMaritalStatus(maritalStatus);
+        Address address = parseAddress(request);
+        searchAttributes.setAddress(address);
+        return searchAttributes;
+    }
+
+    private Date parseBirthdayDateFrom(HttpServletRequest request, HttpServletResponse response) {
+        Date date = null;
         try {
             SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
             String birthdayDateFrom = request.getParameter("lowerBirthday");
             if (StringUtils.isNotEmpty(birthdayDateFrom)) {
                 Date parsedDate = format.parse(request.getParameter("lowerBirthday"));
-                searchAttributes.setBirthdayDateFrom(new Date(parsedDate.getTime()));
+                date = new Date(parsedDate.getTime());
             }
-            else
-                searchAttributes.setBirthdayDateFrom(null);
+        } catch (ParseException e) {
+            log.error(e);
+            request.setAttribute("dateInvalidFormat", "Invalid date format.");
+            returnPage(request, response);
+        }
+        return date;
+    }
+
+    private Date parseBirthdayDateTo(HttpServletRequest request, HttpServletResponse response) {
+        Date date = null;
+        try {
+            SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
             String birthdayDateTo = request.getParameter("upperBirthday");
             if (StringUtils.isNotEmpty(birthdayDateTo)) {
                 Date parsedDate = format.parse(request.getParameter("upperBirthday"));
-                searchAttributes.setBirthdayDateFrom(new Date(parsedDate.getTime()));
+                date = new Date(parsedDate.getTime());
             }
-            else
-                searchAttributes.setBirthdayDateFrom(null);
         } catch (ParseException e) {
             log.error(e);
+            request.setAttribute("dateInvalidFormat", "Invalid date format.");
+            returnPage(request, response);
         }
-        String genderParameter = request.getParameter("gender");
+        return date;
+    }
+
+    private Gender parseGender(HttpServletRequest request) {
         Gender gender = null;
+        String genderParameter = request.getParameter("gender");
         if (StringUtils.isNotEmpty(genderParameter)) {
             gender = Gender.valueOf(genderParameter);
         }
-        searchAttributes.setGender(gender);
-        String maritalStatusParameter =  request.getParameter("marital");
+        return gender;
+    }
+
+    private MaritalStatus parseMaritalStatus(HttpServletRequest request) {
         MaritalStatus maritalStatus = null;
+        String maritalStatusParameter =  request.getParameter("marital");
         if (StringUtils.isNotEmpty(maritalStatusParameter)) {
             maritalStatus = MaritalStatus.valueOf(maritalStatusParameter);
         }
-        searchAttributes.setMaritalStatus(maritalStatus);
+        return maritalStatus;
+    }
+
+    private Address parseAddress(HttpServletRequest request) {
         Address address = new Address();
-        address.setCountry(request.getParameter("country"));
+        String country = request.getParameter("country");
+        country = "NONE".equals(country) ? null : country;
+        address.setCountry(country);
         address.setCity(request.getParameter("city"));
         address.setStreet(request.getParameter("street"));
         address.setHouseNumber(request.getParameter("houseNumber"));
         address.setApartmentNumber(request.getParameter("apartmentNumber"));
         address.setZipCode(request.getParameter("zipCode"));
-        searchAttributes.setAddress(address);
-        return searchAttributes;
+        return address;
+    }
+
+    private void returnPage(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            request.getServletContext().getRequestDispatcher("/WEB-INF/pages/contacts.jsp").forward(request, response);
+        } catch (ServletException | IOException e1) {
+            log.error(e1);
+        }
     }
 }

@@ -57,7 +57,6 @@
                                 <th><div class="cell-text-alignment">Дата рождения</div></th>
                                 <th><div class="cell-text-alignment">Адрес</div></th>
                                 <th><div class="cell-text-alignment">Место работы</div></th>
-                                <th></th>
                             </tr>
                             </thead>
                             <tbody>
@@ -85,16 +84,6 @@
                                         </td>
                                         <td>
                                             <div class="cell-text-alignment">${contact.company}</div>
-                                        </td>
-                                        <td>
-                                            <div class="cell-alignment">
-                                                <button type="button" name="showContact" class="btn btn-info" data-url="${pageContext.request.contextPath}/pages/contact/${contact.idContact}" title="Посмотреть">
-                                                    <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
-                                                </button>
-                                                <button type="button" name="editContact" class="btn btn-warning" data-url="${pageContext.request.contextPath}/pages/editContact/${contact.idContact}" title="Редактировать">
-                                                    <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
-                                                </button>
-                                            </div>
                                         </td>
                                     </tr>
                                 </c:forEach>

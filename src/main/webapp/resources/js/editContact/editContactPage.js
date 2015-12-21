@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function(){
     setChosenMaritalStatus();
     setChosenCountry();
     convertDateToReadableForm();
+    setHiddenDatesToMilliseconds();
 
 
     function setChosenGender() {
@@ -53,6 +54,20 @@ document.addEventListener('DOMContentLoaded', function(){
         birthday.value = birthday.value.split("-").reverse().join(".");
     }
 
+    function setHiddenDatesToMilliseconds() {
+        var hiddenAttachmentsInputList = document.getElementById("hiddenAttachmentsInputList");
+        var currentDateElementNumber = 0;
+        for (var i = 0; i < hiddenAttachmentsInputList.childElementCount; i++) {
+            var hiddenInput = hiddenAttachmentsInputList.children[i];
+            if (hiddenInput.name == ("attachingDate" + currentDateElementNumber)) {
+                var id = "attachingDate" + currentDateElementNumber;
+                currentDateElementNumber++;
+                var splittedDate = document.getElementById(id).value.split("-");
+                document.getElementById(id).value = (new Date(splittedDate[0], splittedDate[1], splittedDate[2])).getTime();
+            }
+        }
+    }
+
     function renamePhoneHiddenInputs() {
         var hiddenPhonesInputList = document.getElementById('hiddenPhonesInputList');
         var phonesInitialCount = document.getElementById("phonesInitialCount").value;
@@ -70,12 +85,8 @@ document.addEventListener('DOMContentLoaded', function(){
         }
         for (; i < hiddenPhonesInputList.childElementCount / phoneDataInputIDs.length; i++) {
             for (j = 0; j < phoneDataInputIDs.length; j++) {
-                console.log(i * phoneDataInputIDs.length + j);
-                console.log(hiddenPhonesInputList);
                 hiddenInput = hiddenPhonesInputList.children[i * phoneDataInputIDs.length + j];
-                console.log(hiddenPhonesInputList.children[i * phoneDataInputIDs.length + j]);
-                console.log(hiddenInput);
-                hiddenInput.name = "new" + phoneDataInputIDs[j] + i;
+                hiddenInput.name = "new" + phoneDataInputIDs[j] + (i - phonesInitialCount);
             }
         }
     }
@@ -91,8 +102,6 @@ document.addEventListener('DOMContentLoaded', function(){
                     hiddenInput.name = "delete" + attachmentDataInputIDs[j] + i;
                     continue;
                 }
-                console.log("data-change: " + hiddenInput.getAttribute("data-change"));
-                console.log(hiddenInput.getAttribute("data-change") == "true");
                 if (hiddenInput.getAttribute("data-change") == "true")
                     hiddenInput.name = "update" + attachmentDataInputIDs[j] + i;
             }
@@ -111,7 +120,6 @@ document.addEventListener('DOMContentLoaded', function(){
         var form = document.getElementById("contactForm");
         form.setAttribute("action", this.getAttribute("data-url"));
         form.setAttribute("method", "post");
-        console.log("saveButton clicked");
         form.submit();
     };
     document.getElementById("cancelButton").onclick = function() {

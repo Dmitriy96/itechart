@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', function(){
     var container = document.getElementById('attachment-popup-form-container');
     var table = document.querySelector('table[datatype="attachment"]');
     var attachmentsInitialCount = document.getElementById("attachmentsInitialCount").value;
+    var error = document.getElementById("attachmentError");
     emptyTableCheck(table);
 
     function showCover() {
@@ -45,13 +46,16 @@ document.addEventListener('DOMContentLoaded', function(){
     }
 
     function validateData() {
+        var errorText = document.getElementById("attachmentErrorText");
         var val = document.getElementById('fileName').value;
         if (!val) {
-            alert("File name must be filled out");
+            errorText.innerHTML = "File name must be filled out.";
+            error.classList.remove("hidden");
             return false;
         }
         if (document.getElementById("attachmentInput").files.length == 0) {
-            alert("Please, browse a file.");
+            errorText.innerHTML = "Please, browse a file.";
+            error.classList.remove("hidden");
             return false;
         }
         return true;
@@ -63,6 +67,7 @@ document.addEventListener('DOMContentLoaded', function(){
         document.getElementById('popupAttachmentText').value = "";
         document.getElementById('attachmentPopupFileChooserBlock').classList.remove('hidden');
         hideCover();
+        error.classList.add("hidden");
         container.style.display = 'none';
         document.body.style.overflow = "";
         emptyTableCheck(table);

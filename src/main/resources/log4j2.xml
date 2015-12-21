@@ -1,26 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="DEBUG">
+<configuration status="DEBUG">
     <Properties>
         <Property name="log-path">C:\Users\Dmitriy\Documents\Installers\Apache Tomcat\apache-tomcat-7.0.65\logs</Property>
     </Properties>
-    <Appenders>
-        <RollingFile name="RollingFile" fileName="${log-path}/ContactsCatalog.log"
-                     filePattern="${log-path}/ContactsCatalog-%d{yyyy-MM-dd}-%i.log" >
-            <PatternLayout>
-                <pattern>%d{dd/MMM/yyyy HH:mm:ss.SSS}- %c{1}: %m%n</pattern>
-            </PatternLayout>
-            <Policies>
-                <SizeBasedTriggeringPolicy size="10 KB" />
-            </Policies>
-            <DefaultRolloverStrategy max="1"/>
-        </RollingFile>
-    </Appenders>
-    <Loggers>
-        <Logger name="root" level="debug" additivity="false">
-            <appender-ref ref="RollingFile" level="debug"/>
-        </Logger>
-        <Root level="debug" additivity="false">
-            <AppenderRef ref="RollingFile"/>
-        </Root>
-    </Loggers>
-</Configuration>
+    <appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+
+        <File name="MyFile" fileName="${log-path}/ContactsCatalog.log">
+            <PatternLayout pattern="%d{yyyy-mm-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </File>
+    </appenders>
+
+    <loggers>
+        <root level="debug">
+            <appender-ref ref="Console" level="debug"/>
+            <appender-ref ref="MyFile" level="debug"/>
+        </root>
+    </loggers>
+</configuration>

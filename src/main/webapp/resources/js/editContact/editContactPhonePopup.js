@@ -4,7 +4,9 @@ document.addEventListener('DOMContentLoaded', function(){
     var table = document.querySelector('table[datatype="phone"]');
     var phoneDataInputIDs = ['countryCode', 'operatorCode', 'phoneNumber', 'phoneComment', 'phoneType'];
     var phonesInitialCount = document.getElementById("phonesInitialCount").value;
+    var error = document.getElementById("phoneError");
     emptyTableCheck(table);
+    convertPhoneTypesToReadableForm();
 
     function showCover() {
         var coverDiv = document.createElement('div');
@@ -37,6 +39,21 @@ document.addEventListener('DOMContentLoaded', function(){
         return false;
     }
 
+    function convertPhoneTypesToReadableForm() {
+        if (emptyTableCheck(table)) return;
+        function getSelectedTextByValue(value) {
+            var phoneType = document.getElementById("phoneType");
+            var text = phoneType.querySelector('option[value="' + value + '"]').text;
+            return text;
+        }
+
+        for (var i = 0; i < table.rows.length; i++) {
+            var phoneTableRow = table.rows[i];
+            var rowData = phoneTableRow.getElementsByClassName('cell-text-alignment');
+            rowData[1].innerHTML = getSelectedTextByValue(rowData[1].innerHTML);
+        }
+    }
+
     function closest(element, tagName) {
         console.log(element, tagName);
         while (element) {
@@ -48,23 +65,42 @@ document.addEventListener('DOMContentLoaded', function(){
     }
 
     function validateData() {
-        var val = document.getElementById('countryCode').value;
-        if (!val || val.match(/^\+\d+$/) == null) {
-            alert("Incorrect countryCode");
-            return false;
+        var errorText = document.getElementById("phoneErrorText");
+        var countryCode = document.getElementById('countryCode').value;
+        if (countryCode) {
+            if (countryCode.match(/^\+\d+$/) == null) {
+                errorText.innerHTML = "Incorrect countryCode";
+                error.classList.remove("hidden");
+                return false;
+            }
+            operatorCode = document.getElementById('operatorCode').value;
+            if (!operatorCode || isNaN(operatorCode)) {
+                errorText.innerHTML = "Incorrect operatorCode";
+                error.classList.remove("hidden");
+                return false;
+            }
         }
-        val = document.getElementById('operatorCode').value;
-        if (!val || isNaN(val)) {
-            alert("Incorrect operatorCode");
-            return false;
+        var operatorCode = document.getElementById('operatorCode').value;
+        if (operatorCode) {
+            if (isNaN(operatorCode)) {
+                errorText.innerHTML = "Incorrect operatorCode";
+                error.classList.remove("hidden");
+                return false;
+            }
+            if (!countryCode || countryCode.match(/^\+\d+$/) == null) {
+                errorText.innerHTML = "Incorrect countryCode";
+                error.classList.remove("hidden");
+                return false;
+            }
         }
-        val = document.getElementById('phoneNumber').value;
-        if (!val || isNaN(val)) {
-            alert("Incorrect phoneNumber");
+        var phoneNumber = document.getElementById('phoneNumber').value;
+        if (!phoneNumber || isNaN(phoneNumber)) {
+            errorText.innerHTML = "Incorrect phoneNumber";
+            error.classList.remove("hidden");
             return false;
         }
         return true;
-    }       // TODO make html input length validation
+    }
 
     function complete() {
         document.getElementById('countryCode').value = "";
@@ -74,6 +110,7 @@ document.addEventListener('DOMContentLoaded', function(){
         hideCover();
         container.style.display = 'none';
         document.body.style.overflow = "";
+        error.classList.add("hidden");
         emptyTableCheck(table);
     }
 
@@ -110,6 +147,8 @@ document.addEventListener('DOMContentLoaded', function(){
                 input.setAttribute("data-number", counter());
                 hiddenPhonesInputList.appendChild(input);
             }
+            var countryCode = hiddenPhonesInputList.querySelector('[name="countryCode' + counter() + '"]');
+            countryCode.value = countryCode.value.substr(1);
         }
 
         document.getElementById('phoneOk').onclick = function() {
@@ -136,24 +175,30 @@ document.addEventListener('DOMContentLoaded', function(){
         setDataForEdition();
 
         function setDataForEdition() {
-            for (var i = 0; i < phoneDataInputIDs.length - 1; i++) {
+            for (var i = 0; i < phoneDataInputIDs.length; i++) {
                 var inputID = phoneDataInputIDs[i];
                 document.getElementById(inputID).value =
                     hiddenPhonesInputList.querySelector('[name="' + inputID + checkBox.value + '"]').value;
             }
+            var countryCode = document.getElementById("countryCode");
+            countryCode.value = "+" + countryCode.value;
         }
 
         function change() {
             var phoneData = [];
-            for (var i = 0; i < phoneDataInputIDs.length - 1; i++) {
+            for (var i = 0; i < phoneDataInputIDs.length; i++) {
                 phoneData[i] = document.getElementById(phoneDataInputIDs[i]).value
             }
             var phoneType = document.getElementById('phoneType');
-            phoneData[phoneDataInputIDs.length - 1] = phoneType.options[phoneType.selectedIndex].text;
+
+            function getSelectedTextByValue(value) {
+                var text = phoneType.querySelector('option[value="' + value + '"]').text;
+                return text;
+            }
 
             var rowData = phoneTableRow.getElementsByClassName('cell-text-alignment');
             rowData[0].innerHTML = phoneData[0] + "" + phoneData[1] + "" + phoneData[2];
-            rowData[1].innerHTML = phoneData[4];
+            rowData[1].innerHTML = getSelectedTextByValue(phoneData[4]);
             rowData[2].innerHTML = phoneData[3];
 
             for (i = 0; i < phoneDataInputIDs.length; i++) {
@@ -162,6 +207,8 @@ document.addEventListener('DOMContentLoaded', function(){
                     hiddenInput.setAttribute("data-change", "true");
                 hiddenInput.value = phoneData[i];
             }
+            var countryCode = hiddenPhonesInputList.querySelector('[name="countryCode' + checkBox.value + '"]');
+            countryCode.value = countryCode.value.substr(1);
         }
 
         document.getElementById('phoneOk').onclick = function() {

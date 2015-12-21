@@ -213,31 +213,39 @@ public final class ContactFindMysqlDao implements ContactFindDao {
         Connection connection = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
-        Contact contact = null;
+        Contact contact = new Contact();
+        contact.setIdContact(contactId);
         try {
             connection = PersistenceManager.createConnection();
+            contact = getContactPersonalData(contact, connection);
+            List<ContactPhone> phones = getContactPhones(contact, connection);
+            contact.setPhoneList(phones);
+            List<ContactAttachment> attachments = getContactAttachments(contact, connection);
+            contact.setAttachmentList(attachments);
+        } catch (NamingException | SQLException ex) {
+            log.error(ex);
+            throw new DaoException("Can't get contact.", ex);
+        } finally {
+            closeStatement(statement);
+            PersistenceManager.closeConnection(connection);
+        }
+        return contact;
+    }
+
+    private Contact getContactPersonalData(Contact contact, Connection connection) {
+        PreparedStatement statement = null;
+        try {
             statement = connection.prepareStatement("SELECT contact.idContact, contact.name, " +
                     "contact.surname, contact.patronymic, contact.birthday, contact.gender, " +
                     "contact.citizenship, contact.website, contact.email, contact.company, contact.maritalStatus, " +
-                    "country.fullName, contact.city, contact.street, contact.houseNumber, contact.apartmentNumber, contact.zipCode, " +
-                    "phone.idPhone, phone.countryCode, phone.operatorCode, phone.phoneNumber, phone.phoneType, phone.comment, " +
-                    "attachment.idAttachment, attachment.fileName, attachment.uploadDate, attachment.comment, attachment.realFileName " +
+                    "country.fullName, contact.city, contact.street, contact.houseNumber, contact.apartmentNumber, contact.zipCode " +
                     "FROM contact " +
                     "JOIN country " +
                     "ON contact.Country_idCountryCode = country.idCountryCode " +
-                    "JOIN phone " +
-                    "on phone.Contact_idContact = contact.idContact " +
-                    "JOIN attachment " +
-                    "on attachment.Contact_idContact = contact.idContact " +
-                    "WHERE contact.idContact = ? AND contact.available = ? and phone.available = ? and attachment.available = ?");
-            statement.setLong(1, contactId);
+                    "WHERE contact.idContact = ? AND contact.available = ?");
+            statement.setLong(1, contact.getIdContact());
             statement.setBoolean(2, true);
-            statement.setBoolean(3, true);
-            statement.setBoolean(4, true);
-            resultSet = statement.executeQuery();
-            contact = new Contact();
-            Set<ContactPhone> phones = new HashSet<>();
-            Set<ContactAttachment> attachments = new HashSet<>();
+            ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
                 contact.setIdContact(resultSet.getLong("contact.idContact"));
                 contact.setName(resultSet.getString("contact.name"));
@@ -262,27 +270,53 @@ public final class ContactFindMysqlDao implements ContactFindDao {
                 address.setApartmentNumber(resultSet.getString("contact.apartmentNumber"));
                 address.setZipCode(resultSet.getString("contact.zipCode"));
                 contact.setAddress(address);
-                ContactPhone phone = getContactPhone(resultSet);
-                phones.add(phone);
-                ContactAttachment attachment = getContactAttachment(resultSet);
-                attachments.add(attachment);
             }
+        } catch (SQLException e) {
+            log.error(e);
+        }
+        return contact;
+    }
+
+    private List<ContactPhone> getContactPhones(Contact contact, Connection connection) {
+        PreparedStatement statement = null;
+        List<ContactPhone> phones = new ArrayList<>();
+        try {
+            statement = connection.prepareStatement("SELECT idPhone, countryCode, " +
+                    "operatorCode, phoneNumber, phoneType, comment " +
+                    "FROM phone " +
+                    "WHERE Contact_idContact = ? AND available = ?");
+            statement.setLong(1, contact.getIdContact());
+            statement.setBoolean(2, true);
+            ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 ContactPhone phone = getContactPhone(resultSet);
                 phones.add(phone);
+            }
+        } catch (SQLException e) {
+            log.error(e);
+        }
+        return phones;
+    }
+
+    private List<ContactAttachment> getContactAttachments(Contact contact, Connection connection) {
+        PreparedStatement statement = null;
+        List<ContactAttachment> attachments = new ArrayList<>();
+        try {
+            statement = connection.prepareStatement("SELECT " +
+                    "idAttachment, fileName, uploadDate, comment, realFileName " +
+                    "FROM attachment " +
+                    "WHERE Contact_idContact = ? AND available = ?");
+            statement.setLong(1, contact.getIdContact());
+            statement.setBoolean(2, true);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
                 ContactAttachment attachment = getContactAttachment(resultSet);
                 attachments.add(attachment);
             }
-            contact.setPhoneList(new ArrayList<ContactPhone>(phones));
-            contact.setAttachmentList(new ArrayList<ContactAttachment>(attachments));
-        } catch (NamingException | SQLException ex) {
-            log.error(ex);
-            throw new DaoException("Can't get contact.", ex);
-        } finally {
-            closeStatement(statement);
-            PersistenceManager.closeConnection(connection);
+        } catch (SQLException e) {
+            log.error(e);
         }
-        return contact;
+        return attachments;
     }
 
     private ContactPhone getContactPhone(ResultSet resultSet) throws SQLException{

@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', function(){
     var container = document.getElementById('phone-popup-form-container');
     var table = document.querySelector('table[datatype="phone"]');
     var phoneDataInputIDs = ['countryCode', 'operatorCode', 'phoneNumber', 'phoneComment', 'phoneType'];
+    var error = document.getElementById("phoneError");
     emptyTableCheck(table);
 
     function showCover() {
@@ -46,19 +47,38 @@ document.addEventListener('DOMContentLoaded', function(){
     }
 
     function validateData() {
-        var val = document.getElementById('countryCode').value;
-        if (!val || val.match(/^\+\d{1,3}$/) == null) {
-            alert("Incorrect countryCode");
-            return false;
+        var errorText = document.getElementById("phoneErrorText");
+        var countryCode = document.getElementById('countryCode').value;
+        if (countryCode) {
+            if (countryCode.match(/^\+\d+$/) == null) {
+                errorText.innerHTML = "Incorrect countryCode";
+                error.classList.remove("hidden");
+                return false;
+            }
+            operatorCode = document.getElementById('operatorCode').value;
+            if (!operatorCode || isNaN(operatorCode)) {
+                errorText.innerHTML = "Incorrect operatorCode";
+                error.classList.remove("hidden");
+                return false;
+            }
         }
-        val = document.getElementById('operatorCode').value;
-        if (!val || isNaN(val)) {
-            alert("Incorrect operatorCode");
-            return false;
+        var operatorCode = document.getElementById('operatorCode').value;
+        if (operatorCode) {
+            if (isNaN(operatorCode)) {
+                errorText.innerHTML = "Incorrect operatorCode";
+                error.classList.remove("hidden");
+                return false;
+            }
+            if (!countryCode || countryCode.match(/^\+\d+$/) == null) {
+                errorText.innerHTML = "Incorrect countryCode";
+                error.classList.remove("hidden");
+                return false;
+            }
         }
-        val = document.getElementById('phoneNumber').value;
-        if (!val || isNaN(val)) {
-            alert("Incorrect phoneNumber");
+        var phoneNumber = document.getElementById('phoneNumber').value;
+        if (!phoneNumber || isNaN(phoneNumber)) {
+            errorText.innerHTML = "Incorrect phoneNumber";
+            error.classList.remove("hidden");
             return false;
         }
         return true;
@@ -72,6 +92,7 @@ document.addEventListener('DOMContentLoaded', function(){
         hideCover();
         container.style.display = 'none';
         document.body.style.overflow = "";
+        error.classList.add("hidden");
         emptyTableCheck(table);
     }
 

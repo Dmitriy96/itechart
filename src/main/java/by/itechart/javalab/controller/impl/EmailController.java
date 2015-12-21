@@ -41,15 +41,30 @@ public class EmailController implements Controller {
     }
 
     private void sendEmail(HttpServletRequest request, HttpServletResponse response) {
-        try {
-            request.setCharacterEncoding("UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            log.error(e);
-        }
+        setEncoding(request, "UTF-8");
         EmailAttributes emailAttributes = new EmailAttributes();
         emailAttributes.setEmailTitle(request.getParameter("subject"));
         emailAttributes.setRecipientEmails(request.getParameter("recipients"));
         emailAttributes.setFromEmail(MainUtils.getEmail());
+        setEmailText(request, emailAttributes);
+        try {
+            SendEmailService.sendEmail(emailAttributes);
+            String path = request.getContextPath() + "/pages/contacts";
+            response.sendRedirect(path);
+        } catch (ServiceException | IOException e) {
+            log.error(e);
+        }
+    }
+
+    private void setEncoding(HttpServletRequest request, String encoding) {
+        try {
+            request.setCharacterEncoding(encoding);
+        } catch (UnsupportedEncodingException e) {
+            log.error(e);
+        }
+    }
+
+    private void setEmailText(HttpServletRequest request, EmailAttributes emailAttributes) {
         String template = request.getParameter("template");
         if (StringUtils.isNotEmpty(template) && !"NONE".equals(template)) {
             STRawGroupDir stGroup = new STRawGroupDir(request.getServletContext().getInitParameter("templatesDirectory"), '$', '$');
@@ -65,53 +80,56 @@ public class EmailController implements Controller {
         } else {
             emailAttributes.setEmailText(request.getParameter("textareaContent"));
         }
-        try {
-            log.debug("text: " + emailAttributes.getEmailText());
-            log.debug("subject: " + emailAttributes.getEmailTitle());
-            SendEmailService.sendEmail(emailAttributes);
-            String path = request.getContextPath() + "/pages/contacts";
-            response.sendRedirect(path);
-        } catch (ServiceException | IOException e) {
-            log.error(e);
-        }
     }
 
     private void showPage(HttpServletRequest request, HttpServletResponse response) {
         String emailContactsId = request.getParameter("emailContactsId");
         try {
-            if (emailContactsId != null) {
-                String contactIds[] = emailContactsId.split(",");
-                Long contactId[] = new Long[contactIds.length];
-                for (int i = 0; i < contactIds.length; i++) {
-                    contactId[i] = Long.parseLong(contactIds[i]);
-                }
-                List<String> emailsList = FindContactService.getEmails(contactId);
-                StringBuilder emails = new StringBuilder();
-                for (String email : emailsList) {
-                    emails.append(email);
-                    emails.append(",");
-                }
-                String contactEmails = emails.toString();
-                contactEmails = contactEmails.substring(0, contactEmails.length() - 1);
-                log.debug(contactEmails);
-                request.setAttribute("recipients", contactEmails);
-                request.setAttribute("emailContactsId", request.getParameter("emailContactsId"));
-            }
+            setRecipientsAttribute(request, emailContactsId);
             List<String> templateNames = MainUtils.getTemplates();
             request.setAttribute("templates", templateNames);
-            if (request.getParameter("subject") != null) {
-                request.setAttribute("subject", request.getParameter("subject"));
-            }
-            String template = request.getParameter("template");
-            if (StringUtils.isNotEmpty(template) && !"NONE".equals(template)) {
-                STRawGroupDir stGroup = new STRawGroupDir(request.getServletContext().getInitParameter("templatesDirectory"), '$', '$');
-                ST st = stGroup.getInstanceOf(request.getParameter("template"));
-                request.setAttribute("chosenTemplate", st.render());
-                request.setAttribute("chosenValue", request.getParameter("template"));
-            }
+            setSubjectAttribute(request);
+            setTemplateAttribute(request);
             request.getServletContext().getRequestDispatcher("/WEB-INF/pages/email.jsp").forward(request, response);
         } catch (ServiceException | ServletException | IOException | NumberFormatException e) {
             log.error(e);
+        }
+    }
+
+    private void setRecipientsAttribute(HttpServletRequest request, String emailContactsId) throws ServiceException {
+        if (emailContactsId != null) {
+            String contactIds[] = emailContactsId.split(",");
+            Long contactId[] = new Long[contactIds.length];
+            for (int i = 0; i < contactIds.length; i++) {
+                contactId[i] = Long.parseLong(contactIds[i]);
+            }
+            List<String> emailsList = FindContactService.getEmails(contactId);
+            StringBuilder emails = new StringBuilder();
+            for (String email : emailsList) {
+                emails.append(email);
+                emails.append(",");
+            }
+            String contactEmails = emails.toString();
+            contactEmails = contactEmails.substring(0, contactEmails.length() - 1);
+            request.setAttribute("recipients", contactEmails);
+            request.setAttribute("emailContactsId", request.getParameter("emailContactsId"));
+        }
+    }
+
+    private void setTemplateAttribute(HttpServletRequest request) {
+        String template = request.getParameter("template");
+        if (StringUtils.isNotEmpty(template) && !"NONE".equals(template)) {
+            STRawGroupDir stGroup = new STRawGroupDir(request.getServletContext().getInitParameter("templatesDirectory"), '$', '$');
+            ST st = stGroup.getInstanceOf(request.getParameter("template"));
+            request.setAttribute("chosenTemplate", st.render());
+            request.setAttribute("chosenValue", request.getParameter("template"));
+        }
+    }
+
+    private void setSubjectAttribute(HttpServletRequest request) {
+        String subject = request.getParameter("subject");
+        if (StringUtils.isNotEmpty(subject)) {
+            request.setAttribute("subject", request.getParameter("subject"));
         }
     }
 }

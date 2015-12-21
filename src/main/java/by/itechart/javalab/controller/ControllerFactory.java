@@ -27,6 +27,7 @@ public class ControllerFactory {
     }
 
     public static Controller getController(String path) {
+        log.debug("getController: {}", path);
         String action = path.split("/")[1];    // URI format: /{action}/*
         Controller controller = null;
         try {

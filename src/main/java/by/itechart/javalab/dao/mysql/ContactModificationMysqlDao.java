@@ -390,12 +390,14 @@ public final class ContactModificationMysqlDao implements ContactModificationDao
             for (ContactPhone phone : contact.getPhoneList()) {
                 if (phone.getCountryCode() != null)
                     statement.setInt(1, phone.getCountryCode());
-                else
+                else {
                     statement.setNull(1, Types.INTEGER);
+                }
                 if (phone.getOperatorCode() != null)
                     statement.setInt(2, phone.getOperatorCode());
-                else
+                else {
                     statement.setNull(2, Types.INTEGER);
+                }
                 statement.setInt(3, phone.getPhoneNumber());
                 statement.setString(4, phone.getPhoneType().name());
                 if (StringUtils.isNotEmpty(phone.getComment()))
@@ -426,17 +428,16 @@ public final class ContactModificationMysqlDao implements ContactModificationDao
         PreparedStatement statement = null;
         try {
             statement = connection.prepareStatement("UPDATE attachment " +
-                    "SET fileName = ?, uploadDate = ?, comment = ?, Contact_idContact = ? " +
+                    "SET fileName = ?, comment = ?, Contact_idContact = ? " +
                     "WHERE idAttachment = ?", Statement.RETURN_GENERATED_KEYS);
             for (ContactAttachment attachment : contact.getAttachmentList()) {
                 statement.setString(1, attachment.getFileName());
-                statement.setDate(2, new Date(attachment.getUploadDate().getTime()));
                 if (StringUtils.isNotEmpty(attachment.getComment()))
-                    statement.setString(3, attachment.getComment());
+                    statement.setString(2, attachment.getComment());
                 else
-                    statement.setNull(3, Types.VARCHAR);
-                statement.setLong(4, contact.getIdContact());
-                statement.setLong(5, attachment.getIdAttachment());
+                    statement.setNull(2, Types.VARCHAR);
+                statement.setLong(3, contact.getIdContact());
+                statement.setLong(4, attachment.getIdAttachment());
                 statement.execute();
                 ResultSet resultSet = statement.getGeneratedKeys();
                 if (resultSet.next()) {

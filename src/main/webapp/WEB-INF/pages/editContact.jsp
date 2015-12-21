@@ -178,7 +178,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <div class="cell-text-alignment">${phone.countryCode}${phone.operatorCode}${phone.phoneNumber}</div>
+                                    <div class="cell-text-alignment"><c:if test="${phone.countryCode != 0 && phone.operatorCode != 0}">+${phone.countryCode}${phone.operatorCode}</c:if>${phone.phoneNumber}</div>
                                 </td>
                                 <td>
                                     <div class="cell-text-alignment">${phone.phoneType}</div>
@@ -261,7 +261,7 @@
                 <div id="image-popup-form">
                     <div id="image-popup-message"></div>
                     <input type="text" id="popupImageText" readonly/>
-                    <input type='file' accept="image/*" id="imageInput"/>
+                    <input type='file' accept="image/jpeg" id="imageInput"/>
                     <input type="button" value="Найти" id="findImageButton"/>
                     <img id="popup-image"
                          class="img-responsive img-centralize"
@@ -277,23 +277,28 @@
             <div id="phone-popup-form-container">
                 <div id="phone-popup-form" class="popup-input-block">
                     <h3 id="phone-popup-message"></h3>
+                    <div id="phoneError" class="alert alert-danger hidden" role="alert">
+                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                        <span class="sr-only">Error:</span>
+                        <span id="phoneErrorText"></span>
+                    </div>
                     <div class="form-group">
                         <label for="countryCode">Код страны</label>
                         <input type="text" class="form-control" id="countryCode" placeholder="+375" maxlength="10" pattern="\+\d{1,3}"/>
                     </div>
                     <div class="form-group">
                         <label for="operatorCode">Код оператора</label>
-                        <input type="text" class="form-control" id="operatorCode" placeholder="Код оператора" maxlength="10"/>
+                        <input type="text" class="form-control" id="operatorCode" placeholder="Код оператора" maxlength="10" pattern="\d+"/>
                     </div>
                     <div class="form-group">
                         <label for="phoneNumber">Телефонный номер</label>
-                        <input type="text" class="form-control" id="phoneNumber" placeholder="Телефонный номер" maxlength="10"/>
+                        <input type="text" class="form-control" id="phoneNumber" placeholder="Телефонный номер" maxlength="10" pattern="\d+"/>
                     </div>
                     <div class="form-group">
                         <label for="phoneType">Тип телефона</label><br/>
                         <select id="phoneType">
-                            <option value="Мобильный">Мобильный</option>
-                            <option value="Домашний">Домашний</option>
+                            <option value="MOBILE" selected>Мобильный</option>
+                            <option value="LANDLINE">Домашний</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -309,6 +314,11 @@
             <div id="attachment-popup-form-container">
                 <div id="attachment-popup-form" class="popup-input-block">
                     <h3 id="attachment-popup-message"></h3><br/>
+                    <div id="attachmentError" class="alert alert-danger hidden" role="alert">
+                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                        <span class="sr-only">Error:</span>
+                        <span id="attachmentErrorText"></span>
+                    </div>
                     <div class="form-group">
                         <label for="fileName">Имя файла</label>
                         <input type="text" class="form-control" id="fileName" placeholder="Имя файла" maxlength="100"/>
@@ -364,7 +374,7 @@
                 <c:forEach items="${contact.attachmentList}" var="attachment" varStatus="loop">
                     <input type="text" name="file${loop.index}" value="${attachment.fileName}" data-change="false" data-delete="false"/>
                     <input type="text" name="fileName${loop.index}" value="${attachment.fileName}" data-change="false" data-delete="false"/>
-                    <input type="text" name="attachingDate${loop.index}" value="${attachment.uploadDate}" data-change="false" data-delete="false"/>
+                    <input type="text" id="attachingDate${loop.index}" name="attachingDate${loop.index}" value="${attachment.uploadDate}" data-change="false" data-delete="false"/>
                     <input type="text" name="attachmentComment${loop.index}" value="${attachment.comment}" data-change="false" data-delete="false"/>
                 </c:forEach>
             </div>

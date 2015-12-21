@@ -231,7 +231,7 @@
                 <div id="image-popup-form">
                     <div id="image-popup-message"></div>
                     <input type="text" id="popupImageText" readonly/>
-                    <input type='file' id="imageInput" accept="image/*" name="userImage"/>
+                    <input type='file' id="imageInput" accept="image/jpeg" name="userImage"/>
                     <input type="button" value="Найти" id="findImageButton"/>
                     <img id="popup-image"
                          class="img-responsive img-centralize"
@@ -247,6 +247,11 @@
             <div id="phone-popup-form-container">
                 <div id="phone-popup-form" class="popup-input-block">
                     <h3 id="phone-popup-message"></h3>
+                    <div id="phoneError" class="alert alert-danger hidden" role="alert">
+                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                        <span class="sr-only">Error:</span>
+                        <span id="phoneErrorText"></span>
+                    </div>
                     <div class="form-group">
                         <label for="countryCode">Код страны</label>
                         <input type="text" class="form-control" id="countryCode" placeholder="+375" maxlength="10" pattern="\+\d{1,3}"/>
@@ -279,6 +284,11 @@
             <div id="attachment-popup-form-container">
                 <div id="attachment-popup-form" class="popup-input-block">
                     <h3 id="attachment-popup-message"></h3><br/>
+                    <div id="attachmentError" class="alert alert-danger hidden" role="alert">
+                        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                        <span class="sr-only">Error:</span>
+                        <span id="attachmentErrorText"></span>
+                    </div>
                     <div class="form-group">
                         <label for="fileName">Имя файла</label>
                         <input type="text" class="form-control" id="fileName" placeholder="Имя файла" maxlength="100"/>

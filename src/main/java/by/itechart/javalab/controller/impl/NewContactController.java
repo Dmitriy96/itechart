@@ -7,12 +7,14 @@ import by.itechart.javalab.service.ContactAttributesService;
 import by.itechart.javalab.service.ModificationContactService;
 import by.itechart.javalab.service.ServiceException;
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,11 +28,13 @@ import java.util.*;
 public class NewContactController implements Controller {
     private static Logger log = LogManager.getLogger(NewContactController.class.getName());
     private Map<String, String> formFields = new HashMap<>();
-    private static final int MAX_FILE_SIZE = 1024 * 1024 * 100;
-    private static final int MAX_REQUEST_SIZE = 1024 * 1024 * 300;
+    private static final int MAX_FILE_SIZE = 1024 * 1024 * 30;
+    private static final int MAX_REQUEST_SIZE = 1024 * 1024 * 50;
+    ServletContext servletContext = null;
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) {
+        log.debug("doGet:");
         try {
             List<String> countries = ContactAttributesService.getAllCountries();
             request.setAttribute("countries", countries);
@@ -40,23 +44,47 @@ public class NewContactController implements Controller {
         }
     }
 
+
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) {
+        log.debug("doPost:");
         boolean isMultipart = ServletFileUpload.isMultipartContent(request);
         if (!isMultipart) {
-            log.debug("Not multipart type request: " + request.getRequestURI() + " " + request.getContentType());
+            log.debug("Not multipart type request: {}, {}", request.getRequestURI(), request.getContentType());
             return;
         }
-        DiskFileItemFactory factory = new DiskFileItemFactory();
+        servletContext = request.getServletContext();
+        ServletFileUpload upload = createUploadRestrictions();
+        List<FileItem> items = null;
+        try {
+            items = upload.parseRequest(request);
+        } catch (FileUploadException e) {
+            log.error(e);
+        }
+        List<FileItem> fileItems = parseFormFieldValues(items);
+        Contact savedContact = saveContact(request, response);
+        try {
+            saveAttachmentsOnDisk(fileItems, savedContact);
+            ModificationContactService.updateContactAttachments(savedContact);
+            response.sendRedirect(request.getContextPath() + "/pages/contacts");
+        } catch (Exception ex) {
+            log.error(ex);
+        }
+    }
 
+
+    private ServletFileUpload createUploadRestrictions() {
+        DiskFileItemFactory factory = new DiskFileItemFactory();
         ServletFileUpload upload = new ServletFileUpload(factory);
         upload.setFileSizeMax(MAX_FILE_SIZE);
         upload.setSizeMax(MAX_REQUEST_SIZE);
         upload.setHeaderEncoding("UTF-8");
+        return upload;
+    }
 
-        List<FileItem> items = null;
+
+    private List<FileItem> parseFormFieldValues(List<FileItem> items) {
         try {
-            items = upload.parseRequest(request);
             Iterator<FileItem> iterator = items.iterator();
             while (iterator.hasNext()) {
                 FileItem item = iterator.next();
@@ -69,8 +97,12 @@ public class NewContactController implements Controller {
             }
         } catch (Exception ex) {
             log.error(ex);
-            return;
         }
+        return items;
+    }
+
+
+    private Contact saveContact(HttpServletRequest request, HttpServletResponse response) {
         Contact contact = null;
         Contact savedContact = null;
         try {
@@ -79,57 +111,29 @@ public class NewContactController implements Controller {
         } catch (ParseException | ControllerException e) {
             log.error(e);
             request.setAttribute("invalidInput", "Invalid input.");
-            try {
-                request.getServletContext().getRequestDispatcher("/WEB-INF/pages/newContact.jsp").forward(request, response);
-            } catch (ServletException | IOException e1) {
-                log.error(e1);
-            }
+            returnPage(request, response);
         } catch (ServiceException e) {
             log.error(e);
             request.setAttribute("error", "Sorry, contact hasn't been saved.");
-            try {
-                request.getServletContext().getRequestDispatcher("/WEB-INF/pages/newContact.jsp").forward(request, response);
-            } catch (ServletException | IOException e1) {
-                log.error(e1);
-            }
+            returnPage(request, response);
         }
+        return savedContact;
+    }
 
-        String attachmentsDirectory = request.getServletContext().getInitParameter("attachmentsDirectory");
-        ensureDirectoryExists(attachmentsDirectory);
-        String imagesDirectory = request.getServletContext().getInitParameter("imagesDirectory");
-        ensureDirectoryExists(imagesDirectory);
 
+    private void returnPage(HttpServletRequest request, HttpServletResponse response) {
         try {
-            Iterator<FileItem> iterator = items.iterator();
-            while (iterator.hasNext()) {
-                FileItem item = iterator.next();
-                String realFileName = item.getName();
-                String fieldName = item.getFieldName();
-                String filePath = null;
-                if ("userImage".equals(item.getFieldName())) {
-                    filePath = imagesDirectory + File.separator + savedContact.getIdContact() + realFileName.substring(realFileName.lastIndexOf("."));
-                } else {
-                    Long attachmentId = null;
-                    List<ContactAttachment> savedAttachments = savedContact.getAttachmentList();
-                    String fileIndex = fieldName.substring(4);                          // "file{fileIndex}"
-                    String fileName = formFields.get("fileName" + fileIndex);
-                    for (ContactAttachment attachment : savedAttachments) {
-                        if (attachment.getFileName().equals(fileName)) {
-                            attachmentId = attachment.getIdAttachment();
-                            attachment.setRealFileName(realFileName);
-                        }
-                    }
-                    filePath = attachmentsDirectory + File.separator + attachmentId + "_" + realFileName;
-                }
-                File uploadedFile = new File(filePath);
-                item.write(uploadedFile);
-            }
-            ModificationContactService.updateContactAttachments(savedContact);
-            String path = request.getContextPath() + "/pages/contacts";
-            response.sendRedirect(path);
-        } catch (Exception ex) {
-            log.error(ex);
+            request.getServletContext().getRequestDispatcher("/WEB-INF/pages/newContact.jsp").forward(request, response);
+        } catch (ServletException | IOException e1) {
+            log.error(e1);
         }
+    }
+
+    private String getDirectoryPath(String directoryName) {
+        ServletContext servletContext = getServletContext();
+        String attachmentsDirectory = servletContext.getInitParameter(directoryName);
+        ensureDirectoryExists(attachmentsDirectory);
+        return attachmentsDirectory;
     }
 
     private void ensureDirectoryExists(String directory) {
@@ -137,6 +141,51 @@ public class NewContactController implements Controller {
         if (!uploadDir.exists()) {
             uploadDir.mkdir();
         }
+    }
+
+    private void saveAttachmentsOnDisk(List<FileItem> fileItems, Contact savedContact) throws Exception {
+        Iterator<FileItem> iterator = fileItems.iterator();
+        while (iterator.hasNext()) {
+            FileItem item = iterator.next();
+            String realFileName = item.getName();
+            String fieldName = item.getFieldName();
+            String filePath = null;
+            if ("userImage".equals(item.getFieldName())) {
+                String imagesDirectory = getDirectoryPath("imagesDirectory");
+                if (realFileName.lastIndexOf(".") != -1) {
+                    filePath = imagesDirectory + File.separator + savedContact.getIdContact() + realFileName.substring(realFileName.lastIndexOf("."));
+                    File uploadedFile = new File(filePath);
+                    item.write(uploadedFile);
+                }
+            } else {
+                Long attachmentId = null;
+                List<ContactAttachment> savedAttachments = savedContact.getAttachmentList();
+                String fileIndex = fieldName.substring(4);                          // "file{fileIndex}"
+                String fileName = formFields.get("fileName" + fileIndex);
+                ContactAttachment attachment = getSavedAttachment(savedAttachments, fileName);
+                attachmentId = attachment.getIdAttachment();
+                attachment.setRealFileName(realFileName);
+                String attachmentsDirectory = getDirectoryPath("attachmentsDirectory");
+                filePath = attachmentsDirectory + File.separator + attachmentId + "_" + realFileName;
+                File uploadedFile = new File(filePath);
+                item.write(uploadedFile);
+            }
+        }
+    }
+
+    private ServletContext getServletContext() {
+        return servletContext;
+    }
+
+    private ContactAttachment getSavedAttachment(List<ContactAttachment> savedAttachments, String fileName) {
+        ContactAttachment contactAttachment = null;
+        for (ContactAttachment attachment : savedAttachments) {
+            if (attachment.getFileName().equals(fileName)) {
+                contactAttachment = attachment;
+                break;
+            }
+        }
+        return contactAttachment;
     }
 
     private Contact createContact() throws ParseException, ControllerException {

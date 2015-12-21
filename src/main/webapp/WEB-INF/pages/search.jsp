@@ -24,7 +24,7 @@
             <div id="emptyFieldsError" class="alert alert-danger hidden" role="alert">
                 <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
                 <span class="sr-only">Error:</span>
-                At least one fild should be filled.
+                At least one field should be filled.
             </div>
             <c:if test="${dateInvalidFormat != null}">
                 <div class="alert alert-danger hidden" role="alert">
