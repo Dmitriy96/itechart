@@ -1,0 +1,1 @@
+<h3>Happy <input type=text name=chosenTemplate0>, dear friend!</h3>

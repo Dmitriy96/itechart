@@ -1,0 +1,1 @@
+<h3>Happy $chosenTemplate0$, dear friend!</h3>
